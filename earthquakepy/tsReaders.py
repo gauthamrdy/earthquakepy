@@ -2,7 +2,7 @@ import re
 import numpy as np
 from earthquakepy import timeseries
 
-def readPeerNgaFile(filepath):
+def read_peer_nga_file(filepath):
     '''
     Reads PEER NGA record file and 
     generates a timeseries object.
@@ -31,14 +31,14 @@ def readPeerNgaFile(filepath):
             y[i:j] = [float(e) for e in elms]
 
     ts = timeseries.TimeSeries(dt, y)
-    ts.setTunit('s')
-    ts.setYunit(yunit)
-    ts.setEqName(eq)
-    ts.setEqDate(eqDate)
-    ts.setStation(station)
-    ts.setComponent(component)
-    ts.setNpts(npts)
-    ts.setDt(dt)
-    ts.setFilepath(filepath)
+    ts.set_tunit('s')
+    ts.set_yunit(yunit)
+    ts.set_eqname(eq)
+    ts.set_eqdate(eqDate)
+    ts.set_station(station)
+    ts.set_component(component)
+    ts.set_npts(npts)
+    ts.set_dt(dt)
+    ts.set_filepath(filepath)
     return ts
         

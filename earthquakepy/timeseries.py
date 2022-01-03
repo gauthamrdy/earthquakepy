@@ -17,52 +17,52 @@ class TimeSeries:
         self.t = t
         self.y = y
 
-    def setTunit(self, unit):
+    def set_tunit(self, unit):
         '''
         Set unit for T(time) coordinates.
         Unit should be a string.
         '''
         self.tunit = unit
 
-    def setYunit(self, unit):
+    def set_yunit(self, unit):
         '''
         Set unit for y coordinates.
         Unit should be a string.
         '''
         self.yunit = unit
 
-    def sett(self, coords):
+    def set_t(self, coords):
         '''
         Set T(time) coordinates.
         Should be a list or numpy array (1D)
         '''
         self.t = coords
 
-    def setEqName(self, name):
+    def set_eqname(self, name):
         ''' Set earthquake name '''
         self.eqName = name
 
-    def setEqDate(self, date):
+    def set_eqdate(self, date):
         ''' Set earthquake date '''
         self.eqDate = date
 
-    def setStation(self, station):
+    def set_station(self, station):
         ''' Recording station '''
         self.station = station
 
-    def setComponent(self, comp):
+    def set_component(self, comp):
         ''' Directional component of record '''
         self.component = comp
 
-    def setDt(self, dt):
+    def set_dt(self, dt):
         ''' Time step between data points '''
         self.dt = dt
 
-    def setNpts(self, npts):
+    def set_npts(self, npts):
         ''' Total number of points in the record '''
         self.npts = npts
 
-    def setFilepath(self, filepath):
+    def set_filepath(self, filepath):
         ''' Record filepath '''
         self.filepath = filepath
         
