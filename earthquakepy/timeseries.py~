@@ -1,0 +1,9 @@
+
+class TimeSeries:
+    '''
+    TimeSeries object class
+    Defines time series
+    '''
+    def __init__():
+        pass
+

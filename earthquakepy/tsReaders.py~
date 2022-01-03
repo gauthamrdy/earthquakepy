@@ -1,0 +1,21 @@
+import re
+
+
+def readPeerNgaFile(filepath):
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        nlines = len(lines)
+
+    for n in range(nlines):
+        line = lines[n]
+        if n == 0:
+            pass
+        if n == 1:
+            eq, eqDate, station, component = line.strip("\n").split(",")
+        if n == 2:
+            yunit = line
+        if n == 3:
+            npts, dt = line.strip("\n").split(",")
+            npts = re.match(r"=\s*(\d*)", npts)[0]
+            dt = re.match(r"=\s*(0?\.\d*)", dt)[0]
+        
