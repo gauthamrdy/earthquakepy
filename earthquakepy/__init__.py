@@ -1,3 +1,4 @@
 import numpy as np
-from earthquakepy import timeseries
-from earthquakepy import tsReaders
+# from earthquakepy import timeseries
+from .tsReaders import *
+from .ims import *
