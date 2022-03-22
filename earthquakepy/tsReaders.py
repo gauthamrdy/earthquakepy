@@ -6,6 +6,8 @@ def read_peer_nga_file(filepath):
     '''
     Reads PEER NGA record file and 
     generates a timeseries object.
+    Input :
+    filepath (string): PEER NGA file path
     '''
     with open(filepath, 'r') as f:
         lines = f.readlines()

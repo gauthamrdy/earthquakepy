@@ -6,12 +6,21 @@ class Sdof:
     """
     Class for single-degree-of-freedom system
     Parameters :
+    You should provide at least wn or T or (m and k).
         Input:
         -------
             m : scalar
                 mass of the system
             c : scalar
                 damping constant
+            k : scalar
+                stiffness
+            xi : scalar
+                 damping ratio
+            wn : scalar
+                 Natural Frequency (rad/s)
+            T : scalar
+                Natural Period
     """
 
     def __init__(self, m=None, c=0.0, k=None, xi=0.0, wn=None, T=None):
