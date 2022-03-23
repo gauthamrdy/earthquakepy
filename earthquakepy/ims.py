@@ -1,21 +1,16 @@
 import numpy as np
 
-from earthquakepy import tsReaders
 from scipy.integrate import cumtrapz
 from scipy.integrate import trapz
 
 
-def arias_intensity(acc, dt, g=False):
+def arias_intensity(ts, g=False):
     '''
     Computes arias intensity:
 
     Parameters
     ----------
-    acc: 1-d array like
-        Acceleration time series
-
-    dt: Time step
-        Sampling interval
+    ts: Acceleration timeseries object
 
     g: Bool, optional
         g=True multiplies acceleration values with g=9.81 m/sec^2.
@@ -26,6 +21,8 @@ def arias_intensity(acc, dt, g=False):
         Arias intensity time series
 
     '''
+    acc = ts.y
+    dt = ts.dt
     if g:
         acc = acc*9.81
 
@@ -33,16 +30,12 @@ def arias_intensity(acc, dt, g=False):
     return iaSeries
 
 
-def total_arias(acc, dt, g= False):
+def total_arias(ts, g= False):
     '''
 
     Parameters
     ----------
-    acc: 1-d array like
-        Acceleration time series
-
-    dt: Time step
-        Sampling interval
+    ts: Acceleration timeseries object
 
     g: Bool, optional
         g=True multiplies acceleration values with g=9.81 m/sec^2.
@@ -54,7 +47,8 @@ def total_arias(acc, dt, g= False):
         Total Arias Intensity
 
     '''
-    from scipy.integrate import trapz
+    acc = ts.y
+    dt = ts.dt
     if g:
         acc = acc*9.81
 
@@ -62,18 +56,14 @@ def total_arias(acc, dt, g= False):
     return ia
 
 
-def sig_duration(acc, dt, g = False, start = 0.05, stop = 0.95):
+def sig_duration(ts, g=False, start=0.05, stop=0.95):
     '''
 
     Computes significant duration as portion of ground motion encompassing 5% to 95% of total arias intensity
 
     Parameters
     ----------
-    acc: 1-d array like
-        Acceleration time series
-
-    dt: Time step
-        Sampling interval
+    ts: Acceleration timeseries object
 
     g: Bool, optional
         g=True multiplies acceleration values with g=9.81 m/sec^2.
@@ -85,22 +75,20 @@ def sig_duration(acc, dt, g = False, start = 0.05, stop = 0.95):
         Significant Duration (5-95)%
 
     '''
-    cumIa = arias_intensity(acc, dt, g = g)
+    acc = ts.y
+    dt = ts.dt
+    cumIa = arias_intensity(ts, g=g)
     index = np.where((cumIa >start*cumIa[-1]) & (cumIa <stop*cumIa[-1]))
     return index[0][-1]*dt - index[0][0]*dt
 
 
-def destructive_potential(acc, dt, g = False):
+def destructive_potential(ts, g=False):
     '''
     Computes destructiveness potential according to Araya and Sargoni (1984)
 
     Parameters
     ----------
-    acc: 1-d array like
-        Acceleration time series
-
-    dt: Time step
-        Sampling interval
+    ts: Acceleration timeseries object
 
     g: Bool, optional
         g=True multiplies acceleration values with g=9.81 m/sec^2.
@@ -112,22 +100,20 @@ def destructive_potential(acc, dt, g = False):
         Destructiveness potential
 
     '''
-    ia = total_arias(acc,dt,g=g)
+    acc = ts.y
+    dt = ts.dt
+    ia = total_arias(ts, g=g)
     u0 = len(np.where(np.diff(np.sign(acc)))[0])
     return ia/u0**2
 
 
-def cum_abs_vel(acc, dt, g=False):
+def cum_abs_vel(ts, g=False):
     '''
     Computes cummulative absolute velocity
 
     Parameters
     ----------
-    acc: 1-d array like
-        Acceleration time series
-
-    dt: Time step
-        Sampling interval
+    ts: Acceleration timeseries object
 
     g: Bool, optional
         g=True multiplies acceleration values with g=9.81 m/sec^2.
@@ -139,13 +125,15 @@ def cum_abs_vel(acc, dt, g=False):
         Cummulative Absolute Velocity
 
     '''
+    acc = ts.y
+    dt = ts.dt
     if g:
         acc = acc*9.81
     acc = np.absolute(acc)
-    return trapz(acc,dx=dt)
+    return trapz(acc, dx=dt)
 
 
-def cum_abs_disp(vel, dt):
+def cum_abs_disp(ts):
     '''
     Computes Cummulative Absolute Displacement
 
@@ -157,14 +145,13 @@ def cum_abs_disp(vel, dt):
     vel: 1-d array like
         Velocity time series
 
-    dt: Time step
-        Sampling interval
-
     Returns
     -------
     Scalar:
         Cummulative Absolute Velocity
 
     '''
+    vel = ts.y
+    dt = ts.dt
     vel = np.absolute(vel)
-    return trapz(vel,dx=dt)
+    return trapz(vel, dx=dt)

@@ -37,12 +37,21 @@ class Sdof:
         elif (k and m):
             wn = np.sqrt(k/m)
             T = 2*np.pi/wn
-            xi = c/(2*m*wn)
+            if xi:
+                c = 2*xi*m*wn
+            elif c:
+                xi = c/(2*m*wn)
         else:
             raise Exception("Incorrect parameters")
 
         self.m, self.c, self.k = m, c, k
         self.xi, self.wn, self.T = xi, wn, T
+
+    def __repr__(self):
+        a = ""
+        for key, val in vars(self).items():
+            a += "{:10s}:{}\n".format(key, val)
+        return a
 
     def sdof_grad(self, t, y, tv, f):
         m, c, k = self.m, self.c, self.k

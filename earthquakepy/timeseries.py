@@ -1,4 +1,6 @@
 import numpy as np
+from .singledof import *
+
 
 class TimeSeries:
     '''
@@ -16,6 +18,14 @@ class TimeSeries:
             t = np.arange(0.0, len(y)*t-1E-5*t, t)
         self.t = t
         self.y = y
+
+    def __repr__(self):
+        #return str(pprint.PrettyPrinter(indent=2).pprint(vars(self)))
+        #return str(vars(self))
+        a = ""
+        for key, val in vars(self).items():
+            a += "{:10s}:{}\n".format(key, val)
+        return a
 
     def set_tunit(self, unit):
         '''
@@ -65,5 +75,37 @@ class TimeSeries:
     def set_filepath(self, filepath):
         ''' Record filepath '''
         self.filepath = filepath
-        
 
+    def get_response_spectra(self, Tstart=0.01, Tend=15.5, dT=1.0, xi=0.05):
+        """
+        Calculates linear elastic response spectra associated with the timeseries.
+        Inputs:
+        Tstart and Tend (floats): Periods corresponding to spectrum width
+        dT (float): Step size for period
+        xi (float): damping ratio
+        """
+        T = np.arange(Tstart, Tend, dT)
+        specLength = len(T)
+        Sd = np.empty(specLength)
+        for i in range(specLength):
+            s = Sdof(T=T[i], xi=xi)
+            r = s.get_response(self, tsType="baseExcitation")
+            D = np.max(np.abs(r.y[0]))
+            Sd[i] = D
+            #Sv = (2*np.pi/T)*Sd
+            #Sa = (2*np.pi/T)*Sv
+        return ResponseSpectra(T, Sd)
+
+
+class ResponseSpectra:
+    def __init__(self, T, Sd):
+        """
+        Class for storing response spectra
+        Inputs:
+        T (array of float): Natural period
+        Sd, Sv(not implemented), Sa(not implemented) (array of float): Spectral displacement, velocity and acceleration, respectively.
+        """
+        self.T = T
+        self.Sd = Sd
+        #self.Sv = Sv
+        #self.Sa = Sa
