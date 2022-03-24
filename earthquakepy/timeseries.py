@@ -71,7 +71,11 @@ class TimeSeries:
     def set_npts(self, npts):
         ''' Total number of points in the record '''
         self.npts = npts
-
+        
+    def set_time(self, time):
+        ''' Total duration of the record in seconds'''
+        self.time = time
+    
     def set_filepath(self, filepath):
         ''' Record filepath '''
         self.filepath = filepath
@@ -96,7 +100,96 @@ class TimeSeries:
             #Sa = (2*np.pi/T)*Sv
         return ResponseSpectra(T, Sd)
 
+    def get_fourier_spectrum(self, graph=False):
+        '''
+        Computes fourier spectrum associated with the time series
+        '''
+        from scipy.fftpack import fft, fftfreq
+        import matplotlib.pyplot as plt
+        N = self.npts
+        T = self.dt #sampling interval
+        yf = fft(self.y)
+        FAmp = np.abs(yf[0:N//2])
+        freq = fftfreq(N, T)[:N//2]
+        if graph: 
+            fig, ax = plt.subplots()
+            ax.plot(freq,  2.0/N *FAmp, color='black', linewidth=0.5)
+            ax.set_xscale('log')
+            plt.show()
+        return FourierSpectrum(freq, FAmp)
 
+    def get_power_spectrum(self, graph=False):
+        '''
+        Computes power spectrum associated with the time series
+        '''
+        N = self.npts
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        powerAmp = fourier_spectrum.amplitude**2
+        if graph: 
+            fig, ax = plt.subplots()
+            ax.plot(freq,  2.0/N *powerAmp, color='black', linewidth=0.5)
+            ax.set_xscale('log')
+            plt.show()
+            
+        return PowerSpectrum(freq, powerAmp)
+
+    def mean_period(self):
+        '''
+        Computes the simplified frequency content characterisation parameter according to  Rathje et al. [1998]
+        Returns
+        -------
+        Scalar:
+            Mean period
+
+        '''
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        FAmp = fourier_spectrum.amplitude
+        boolArr = (freq>0.25) & (freq<20)
+        n = FAmp[boolArr]**2/freq[boolArr]
+        n = n.sum()
+        d = FAmp[boolArr]**2
+        d = d.sum()
+        return n/d
+
+    def mean_frequency(self):
+        '''
+        Computes the simplified frequency content characterisation parameter according to  Schnabel [1973]
+        Returns
+        -------
+        Scalar:
+            Mean square frequency
+
+        '''
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        FAmp = fourier_spectrum.amplitude
+        boolArr = (freq>0.25) & (freq<20)
+        n = FAmp[boolArr]**2*freq[boolArr]
+        n = n.sum()
+        d = FAmp[boolArr]**2
+        d = d.sum()
+        return n/d
+
+    def epsilon(self):
+        '''
+        Computes the dimensionless frequency indicator r$\epsilon$ accordingn to Clough and Penzien 
+        Returns
+        -------
+        Scalar
+
+        '''
+        from scipy.integrate import trapz
+        power_spectrum = self.get_power_spectrum()
+        freq = power_spectrum.frequencies
+        powerAmp = power_spectrum.amplitude
+        m0 = trapz(powerAmp,freq)
+        m2 = trapz(powerAmp*freq**2,freq)
+        m4 = trapz(powerAmp*freq**4,freq)
+        eps = np.sqrt(1 - m2**2/(m0*m4)) 
+        return eps
+    
 class ResponseSpectra:
     def __init__(self, T, Sd):
         """
@@ -109,3 +202,29 @@ class ResponseSpectra:
         self.Sd = Sd
         #self.Sv = Sv
         #self.Sa = Sa
+
+
+class FourierSpectrum:
+    def __init__(self, frequencies, amplitude):
+        '''
+        Class to store fourier spectra
+        Parameters
+        ----------
+        Freqencies : Frequency (Hz)
+        Amplitude : Fourier Amplitude
+        '''
+        self.frequencies = frequencies
+        self.amplitude = amplitude
+        
+
+class PowerSpectrum:
+    def __init__(self, frequencies, amplitude):
+        '''
+        Class to store power spectra
+        Parameters
+        ----------
+        Freqencies : Frequency (Hz)
+        Amplitude : Power Amplitude
+        '''
+        self.frequencies = frequencies
+        self.amplitude = amplitude
