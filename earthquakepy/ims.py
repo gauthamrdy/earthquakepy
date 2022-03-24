@@ -3,7 +3,6 @@ import numpy as np
 from scipy.integrate import cumtrapz
 from scipy.integrate import trapz
 
-
 def arias_intensity(ts, g=False):
     '''
     Computes arias intensity:
@@ -75,7 +74,6 @@ def sig_duration(ts, g=False, start=0.05, stop=0.95):
         Significant Duration (5-95)%
 
     '''
-    acc = ts.y
     dt = ts.dt
     cumIa = arias_intensity(ts, g=g)
     index = np.where((cumIa >start*cumIa[-1]) & (cumIa <stop*cumIa[-1]))
@@ -101,7 +99,6 @@ def destructive_potential(ts, g=False):
 
     '''
     acc = ts.y
-    dt = ts.dt
     ia = total_arias(ts, g=g)
     u0 = len(np.where(np.diff(np.sign(acc)))[0])
     return ia/u0**2
@@ -137,13 +134,12 @@ def cum_abs_disp(ts):
     '''
     Computes Cummulative Absolute Displacement
 
-        Note
-            Please make sure to use velocity time series as input to compute cummulative absolute displacement.
+    Note
+        Please make sure to use velocity time series as input to compute cummulative absolute displacement.
 
     Parameters
     ----------
-    vel: 1-d array like
-        Velocity time series
+    ts: Velocity timeseries object
 
     Returns
     -------
@@ -155,3 +151,52 @@ def cum_abs_disp(ts):
     dt = ts.dt
     vel = np.absolute(vel)
     return trapz(vel, dx=dt)
+
+def specific_energy(ts):
+    '''
+    
+    Computes specific energy density
+    
+    Note
+        Please use velocity time series as input to compute specific energy density.
+    
+    Parameters
+    ----------
+    ts: Velocity timeseries object
+
+    Returns
+    -------
+    Scalar:
+        Specify Energy Density
+        
+    '''
+    vel = ts.y
+    dt = ts.dt
+    return trapz(vel**2, dx=dt)
+
+def rms(ts,g=False):
+    '''
+    
+    Root-mean-square value of acceleration/velocity/displacement time series
+
+    Parameters
+    ----------
+    ts: Acceleration/Velocity/Displacement time series object 
+
+    g: Bool, optional
+        g=True multiplies acceleration values with g=9.81 m/sec^2.
+        Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
+
+    Returns
+    -------
+    Scalar:
+        Root-mean-square value of time series values
+    
+
+    '''
+    val = ts.y
+    total_time = ts.time
+    dt = ts.dt
+    return np.sqrt(trapz(val**2, dx=dt)*total_time**-1)
+
+
