@@ -74,9 +74,11 @@ class Sdof:
         """
         Wrapper around solve_ivp module from scipy.integrate. It supports all
         the arguments supported by solve_ivp.
+        
         Input :
         ts (timeseries object): timeseries defining loading/base excitation
         tsType (string): "baseExcitation" or "force"
+        
         **kwargs: arguments acceptable to scipy solve_ivp module
         By default the solution will be obtained for duration = 2 * (ts.t duration).
         This can be changed using t_span argument. Default method : BDF.

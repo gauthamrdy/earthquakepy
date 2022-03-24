@@ -24,6 +24,7 @@ def read_peer_nga_file(filepath):
         elif n == 3:
             npts = int(re.match(r".*= *([0-9]*),.*", line)[1])
             dt = float(re.match(r".*= *(0?\.[0-9]*) SEC", line)[1])
+            time = dt*npts
             y = np.zeros(int(npts))
         else:
             elms = line.strip("\n").split()
@@ -41,6 +42,7 @@ def read_peer_nga_file(filepath):
     ts.set_component(component)
     ts.set_npts(npts)
     ts.set_dt(dt)
+    ts.set_time(time)
     ts.set_filepath(filepath)
     return ts
         
