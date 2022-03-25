@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 
 class OpenSeesNodeOutput:
@@ -36,3 +37,50 @@ class OpenSeesNodeOutput:
         self.data = dataDir
         self.nodeTags = nodeTags
         self.compNames = compNames
+
+
+class OpenSeesModel:
+    def __init__(self, jsonModelFile):
+        """
+        Class for storing OpenSees Model details recorded in a JSON file using command "print -JSON -file jsonModelFile
+        """
+        self.jsonFile = jsonModelFile
+
+        # Parse JSON
+        self.json_parser()
+
+    def __repr__(self):
+        b = self.__str__()
+        return b
+
+    def __str__(self):
+        a = ""
+        for key, val in vars(self).items():
+            a += "{:10s}:{}\n".format(key, val)
+        return a
+
+    def json_parser(self):
+        # Read file
+        with open(self.jsonFile, "r") as f:
+            data = f.readlines()
+
+        nTags = []
+        crd = []
+        eTags = []
+        eType = []
+        eNodes = []
+        eMat = []
+        for line in data:
+            line = line.strip("\t|\n|,")
+            if ("name" in line) and ("crd" in line):
+                j = json.loads(line)
+                nTags.append(j["name"])
+                crd.append(j["crd"])
+            elif ("name" in line) and ("nodes" in line):
+                j = json.loads(line)
+                eTags.append(j["name"])
+                eType.append(j["type"])
+                eNodes.append(j["nodes"])
+                eMat.append(j["material"])
+        self.nodes = {"tags": np.array(nTags), "crd": np.array(crd)}
+        self.elements = {"tags": np.array(eTags), "type": np.array(eType), "nodes": np.array(eNodes), "material": np.array(eMat)}
