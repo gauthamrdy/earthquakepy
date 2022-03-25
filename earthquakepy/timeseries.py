@@ -159,7 +159,7 @@ class TimeSeries:
 
     def epsilon(self):
         '''
-        Computes the dimensionless frequency indicator r$\epsilon$ as given by Clough and Penzien 
+        Computes the dimensionless frequency indicator, epsilon as given by Clough and Penzien 
         Returns
         -------
         Scalar
@@ -233,7 +233,6 @@ class PowerSpectrum:
         '''
         self.frequencies = frequencies
         self.amplitude = amplitude
-<<<<<<< HEAD
         self.N = N
     
     def plot(self, log=False):
@@ -255,9 +254,3 @@ class PowerSpectrum:
             ax.set_xscale('log')
         # plt.show()
         return fig
-=======
-=======
-        # self.Sv = Sv
-        # self.Sa = Sa
->>>>>>> digvijay
->>>>>>> 718e2a33e65c391ba905e2a52de78aa1dbd2ae86
