@@ -100,25 +100,19 @@ class TimeSeries:
             #Sa = (2*np.pi/T)*Sv
         return ResponseSpectra(T, Sd)
 
-    def get_fourier_spectrum(self, graph=False):
+    def get_fourier_spectrum(self):
         '''
         Computes fourier spectrum associated with the time series
         '''
         from scipy.fftpack import fft, fftfreq
-        import matplotlib.pyplot as plt
         N = self.npts
         T = self.dt #sampling interval
         yf = fft(self.y)
         FAmp = np.abs(yf[0:N//2])
         freq = fftfreq(N, T)[:N//2]
-        if graph: 
-            fig, ax = plt.subplots()
-            ax.plot(freq,  2.0/N *FAmp, color='black', linewidth=0.5)
-            ax.set_xscale('log')
-            plt.show()
-        return FourierSpectrum(freq, FAmp)
+        return FourierSpectrum(freq, FAmp, N)
 
-    def get_power_spectrum(self, graph=False):
+    def get_power_spectrum(self):
         '''
         Computes power spectrum associated with the time series
         '''
@@ -126,13 +120,7 @@ class TimeSeries:
         fourier_spectrum = self.get_fourier_spectrum()
         freq = fourier_spectrum.frequencies
         powerAmp = fourier_spectrum.amplitude**2
-        if graph: 
-            fig, ax = plt.subplots()
-            ax.plot(freq,  2.0/N *powerAmp, color='black', linewidth=0.5)
-            ax.set_xscale('log')
-            plt.show()
-            
-        return PowerSpectrum(freq, powerAmp)
+        return PowerSpectrum(freq, powerAmp,N)
 
     def mean_period(self):
         '''
@@ -174,7 +162,7 @@ class TimeSeries:
 
     def epsilon(self):
         '''
-        Computes the dimensionless frequency indicator r$\epsilon$ accordingn to Clough and Penzien 
+        Computes the dimensionless frequency indicator r$\epsilon$ as given by Clough and Penzien 
         Returns
         -------
         Scalar
@@ -205,7 +193,7 @@ class ResponseSpectra:
 
 
 class FourierSpectrum:
-    def __init__(self, frequencies, amplitude):
+    def __init__(self, frequencies, amplitude, N):
         '''
         Class to store fourier spectra
         Parameters
@@ -215,10 +203,30 @@ class FourierSpectrum:
         '''
         self.frequencies = frequencies
         self.amplitude = amplitude
-        
+        self.N = N
+    
+    def plot(self, log=False):
+        '''
+        Method plots Fourier Spectrum of time series object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        '''
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        ax.plot(self.frequencies,  2.0/self.N *self.amplitude, color='black', linewidth=0.5)
+        ax.set_xlabel('Frequency (Hz)')
+        ax.set_ylabel('Fourier Amplitude')
+        if log:
+            ax.set_xscale('log')
+        # plt.show()
+        return fig
 
 class PowerSpectrum:
-    def __init__(self, frequencies, amplitude):
+    def __init__(self, frequencies, amplitude, N):
         '''
         Class to store power spectra
         Parameters
@@ -228,3 +236,24 @@ class PowerSpectrum:
         '''
         self.frequencies = frequencies
         self.amplitude = amplitude
+        self.N = N
+    
+    def plot(self, log=False):
+        '''
+        Method plots Power Spectrum of time series object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        '''
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots()
+        ax.plot(self.frequencies,  2.0/self.N *self.amplitude, color='black', linewidth=0.5)
+        ax.set_xlabel('Frequency (Hz)')
+        ax.set_ylabel('Power Amplitude')
+        if log:
+            ax.set_xscale('log')
+        # plt.show()
+        return fig
