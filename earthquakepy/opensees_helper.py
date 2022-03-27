@@ -1,4 +1,4 @@
-from .opensees_classes import *
+from .opensees_classes import OpenSeesNodeOutput
 
 
 def read_ops_node_output(filename, ncomps, nodeTags=[], compNames=[], **kwargs):

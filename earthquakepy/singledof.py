@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
+from scipy.integrate._ivp.ivp import OdeResult
+import matplotlib.pyplot as plt
 
 
 class Sdof:
@@ -74,11 +76,11 @@ class Sdof:
         """
         Wrapper around solve_ivp module from scipy.integrate. It supports all
         the arguments supported by solve_ivp.
-        
+
         Input :
         ts (timeseries object): timeseries defining loading/base excitation
         tsType (string): "baseExcitation" or "force"
-        
+
         **kwargs: arguments acceptable to scipy solve_ivp module
         By default the solution will be obtained for duration = 2 * (ts.t duration).
         This can be changed using t_span argument. Default method : BDF.
@@ -106,5 +108,27 @@ class Sdof:
             }
         kwargs = {**defaultArgs, **kwargs}
 
+        # r = solve_ivp(self.sdof_grad, **kwargs)
         r = solve_ivp(self.sdof_grad, **kwargs)
-        return r
+        m, c, k = self.m, self.c, self.k
+        fv = np.interp(r.t, ts.t, f)
+        acc = 1/m*(fv - c*r.y[1] - k*r.y[0])
+        return SdofResponseTimeSeries(r, acc)
+
+
+class SdofResponseTimeSeries(OdeResult):
+    """
+    Class for response object of SDOF system
+    """
+    def __init__(self, ode_result, acc):
+        self.acc = acc
+        for key, val in ode_result.items():
+            self.__setattr__(key, val)
+
+    def plot(self, **kwargs):
+        y = np.transpose(self.y)
+        fig, ax = plt.subplots(nrows=1, ncols=len(self.y), **kwargs)
+        for i in range(len(self.y)):
+            ax[i].plot(self.t, self.y[i], linewidth=0.5, color="black")
+            ax[i].set_xlabel("Time (s)")
+        return fig

@@ -38,6 +38,12 @@ class OpenSeesNodeOutput:
         self.nodeTags = nodeTags
         self.compNames = compNames
 
+    def __repr__(self):
+        a = ""
+        for key, val in vars(self).items():
+            a += "{:10s}:\n".format(key)
+        return a
+
 
 class OpenSeesModel:
     def __init__(self, jsonModelFile):
@@ -56,7 +62,7 @@ class OpenSeesModel:
     def __str__(self):
         a = ""
         for key, val in vars(self).items():
-            a += "{:10s}:{}\n".format(key, val)
+            a += "{:10s}:\n".format(key)
         return a
 
     def json_parser(self):
@@ -64,23 +70,29 @@ class OpenSeesModel:
         with open(self.jsonFile, "r") as f:
             data = f.readlines()
 
-        nTags = []
-        crd = []
-        eTags = []
-        eType = []
-        eNodes = []
-        eMat = []
+        # nTags = []
+        # crd = []
+        # eTags = []
+        # eType = []
+        # eNodes = []
+        # eMat = []
+        nodes = {}
+        elements = {}
         for line in data:
             line = line.strip("\t|\n|,")
             if ("name" in line) and ("crd" in line):
                 j = json.loads(line)
-                nTags.append(j["name"])
-                crd.append(j["crd"])
+                # nTags.append(j["name"])
+                # crd.append(j["crd"])
+                nodes = {**nodes, **{j["name"]: j["crd"]}}
             elif ("name" in line) and ("nodes" in line):
                 j = json.loads(line)
-                eTags.append(j["name"])
-                eType.append(j["type"])
-                eNodes.append(j["nodes"])
-                eMat.append(j["material"])
-        self.nodes = {"tags": np.array(nTags), "crd": np.array(crd)}
-        self.elements = {"tags": np.array(eTags), "type": np.array(eType), "nodes": np.array(eNodes), "material": np.array(eMat)}
+                # eTags.append(j["name"])
+                # eType.append(j["type"])
+                # eNodes.append(j["nodes"])
+                # eMat.append(j["material"])
+                elements = {**elements, **{j["name"]: {"type": j["type"], "nodes": j["nodes"], "material": j["material"]}}}
+        self.nodes = nodes
+        self.elements = elements
+        # self.nodes = {"tags": np.array(nTags), "crd": np.array(crd)}
+        # self.elements = {"tags": np.array(eTags), "type": np.array(eType), "nodes": np.array(eNodes), "material": np.array(eMat)}
