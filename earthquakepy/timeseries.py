@@ -475,13 +475,16 @@ class FourierSpectrum:
         Matplotlib Figure Object
 
         '''
-        fig, ax = plt.subplots(nrows=1, ncols=2, **kwargs)
+        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
         ax[0].set_xlabel('Frequency (Hz)')
         ax[0].set_ylabel('Fourier Amplitude')
         ax[0].plot(self.frequencies,  2.0/self.N * self.amplitude, color='black', linewidth=0.5)
         ax[1].set_xlabel('Frequency (Hz)')
         ax[1].set_ylabel('Phase angle')
         ax[1].plot(self.frequencies,  self.phase, color='black', linewidth=0.5)
+        ax[2].set_xlabel('Frequency (Hz)')
+        ax[2].set_ylabel('Unwrapped phase angle')
+        ax[2].plot(self.frequencies,  np.unwrap(self.phase), color='black', linewidth=0.5)
         if log:
             ax[0].set_xscale('log')
         return fig

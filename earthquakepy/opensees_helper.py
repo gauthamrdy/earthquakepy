@@ -1,4 +1,12 @@
-from .opensees_classes import OpenSeesNodeOutput
+from .opensees_classes import OpenSeesNodeOutput, OpenSeesModel
+
+
+def read_ops_json_model(filename):
+    """
+    Reads opensees generated json model file obtained using following command:
+    print -JSON -file filename
+    """
+    return OpenSeesModel(filename)
 
 
 def read_ops_node_output(filename, ncomps, nodeTags=[], compNames=[], **kwargs):

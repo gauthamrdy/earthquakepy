@@ -40,15 +40,166 @@
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install earthquakepy
 </pre></div>
 </div>
-<p>Thats it! This will install the earthquakepy and other required libraries. Wasn’t it easy?</p>
+<p>Thats it! This will install the earthquakepy and other required libraries. Wasn’t that easy?</p>
 </section>
 <section id="import">
 <h2>Import<a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
-<p>Now probably you know how to import the library. Let me just remind you.</p>
+<p>Probably you know how to import the library. Let me just remind you.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">earthquakepy</span> <span class="k">as</span> <span class="nn">ep</span>
 </pre></div>
 </div>
-<p>Although the library can be imported as anything, we will use <code class="code docutils literal notranslate"><span class="pre">ep</span></code> for the same throughout.</p>
+<p>Although the library can be imported as anything, we will use <code class="code docutils literal notranslate"><span class="pre">ep</span></code> for the same.</p>
+</section>
+<section id="core-functions">
+<h2>Core functions<a class="headerlink" href="#core-functions" title="Permalink to this headline">¶</a></h2>
+<p>Following are the functions available in the library. Do note that several other functions/modules exists in the library inside various classes and those are not included here.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="earthquakepy.read_peer_nga_file">
+<span class="sig-prename descclassname"><span class="pre">earthquakepy.</span></span><span class="sig-name descname"><span class="pre">read_peer_nga_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#earthquakepy.read_peer_nga_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a PEER-NGA west2 database record from a file given by filename.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – filename of the record file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>TimeSeries object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>earthquakepy.timeseries.Timeseries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="earthquakepy.read_raw_file">
+<span class="sig-prename descclassname"><span class="pre">earthquakepy.</span></span><span class="sig-name descname"><span class="pre">read_raw_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#earthquakepy.read_raw_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the data from a raw file with first column as time axis and second column as ordinates. This function is a wrapper around numpy.genfromtxt and accepts all of its arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the raw data file.</p></li>
+<li><p><strong>**kwargs</strong> – <p>Optional arguments to be passed to numpy.genfromtxt</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>TimeSeries object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>earthquakepy.timeseries.TimeSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="earthquakepy.sdof">
+<span class="sig-prename descclassname"><span class="pre">earthquakepy.</span></span><span class="sig-name descname"><span class="pre">sdof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#earthquakepy.sdof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a SDOF system object from the parameters provided. User should provide the set of parameters appropriately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<em>float</em><em> or </em><em>None</em>) – mass of the system.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – damping constant of the system.</p></li>
+<li><p><strong>k</strong> (<em>float</em><em> or </em><em>None</em>) – stiffness of the system.</p></li>
+<li><p><strong>xi</strong> (<em>float</em>) – damping ratio of the system.</p></li>
+<li><p><strong>wn</strong> (<em>float</em><em> or </em><em>None</em>) – natural frequency of the system.</p></li>
+<li><p><strong>T</strong> (<em>float</em><em> or </em><em>None</em>) – Period of the system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sdof object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>earthquakepy.singledof.Sdof</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="earthquakepy.mdof">
+<span class="sig-prename descclassname"><span class="pre">earthquakepy.</span></span><span class="sig-name descname"><span class="pre">mdof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#earthquakepy.mdof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a MDOF system object from the parameters provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<em>2-D array</em>) – Mass matrix</p></li>
+<li><p><strong>C</strong> (<em>2-D array</em>) – Damping matrix</p></li>
+<li><p><strong>K</strong> (<em>2-D array</em>) – STiffness matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Mdof object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>earthquakepy.multidof.Mdof</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="earthquakepy.read_ops_json_model">
+<span class="sig-prename descclassname"><span class="pre">earthquakepy.</span></span><span class="sig-name descname"><span class="pre">read_ops_json_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#earthquakepy.read_ops_json_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a json model file generated by OpenSees using</p>
+<div class="highlight-tcl notranslate"><div class="highlight"><pre><span></span><span class="nv">print</span><span class="w"> </span><span class="o">-</span>JSON<span class="w"> </span><span class="o">-</span>file<span class="w"> </span>filename
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – json file filename</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>OpenSeesModel object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>earthquakepy.opensees_classes.OpenSeesModel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="earthquakepy.read_ops_node_output">
+<span class="sig-prename descclassname"><span class="pre">earthquakepy.</span></span><span class="sig-name descname"><span class="pre">read_ops_node_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomps</span></span></em>, <span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">nodeTags=[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compNames=[]</span></span></em>, <span class="optional">]</span><em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#earthquakepy.read_ops_node_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads node output file generated by opensees node recorder command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Node output file name</p></li>
+<li><p><strong>ncomps</strong> (<em>int</em>) – Number of components per node</p></li>
+<li><p><strong>nodeTags</strong> (<em>1-D array</em><em> or </em><em>list</em>) – Optional, list of node tags to be used. Default: [1, 2, …., n]</p></li>
+<li><p><strong>compNames</strong> (<em>1-D array</em><em> or </em><em>list</em>) – Optional, list of component names. Default: [“0”, “1”, “2”]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>OpenSeesNodeOutput object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>earthquakepy.opensees_helper.OpenSeesNodeOutput</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="earthquakepy.read_ops_element_output">
+<span class="sig-prename descclassname"><span class="pre">earthquakepy.</span></span><span class="sig-name descname"><span class="pre">read_ops_element_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncomps</span></span></em>, <span class="optional">[</span><em class="sig-param"><span class="n"><span class="pre">nodeTags=[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compNames=[]</span></span></em>, <span class="optional">]</span><em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#earthquakepy.read_ops_element_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads node output file generated by opensees element recorder command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Element output file name</p></li>
+<li><p><strong>ncomps</strong> (<em>int</em>) – Number of components per element</p></li>
+<li><p><strong>elmTags</strong> (<em>1-D array</em><em> or </em><em>list</em>) – Optional, list of element tags to be used. Default: [1, 2, …., n]</p></li>
+<li><p><strong>compNames</strong> (<em>1-D array</em><em> or </em><em>list</em>) – Optional, list of component names. Default: [“0”, “1”, “2”]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>OpenSeesNodeOutput object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>earthquakepy.opensees_helper.OpenSeesNodeOutput</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -74,6 +225,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import">Import</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-functions">Core functions</a></li>
 </ul>
 </li>
 </ul>

@@ -46,3 +46,16 @@ def read_peer_nga_file(filepath):
     ts.set_filepath(filepath)
     return ts
         
+
+def read_raw_file(filename, **kwargs):
+    """
+    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates.
+    Input:
+        filename (str): filename of the file containing raw data
+
+    Output:
+        Timeseries object
+    """
+    data = np.genfromtxt(filename, **kwargs)
+    ts = timeseries.TimeSeries(data[:, 0], data[:, 1])
+    return ts
