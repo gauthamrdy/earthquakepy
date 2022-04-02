@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>earthquakepy.singledof API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>earthquakepy.singledof</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import numpy as np
+from scipy.integrate import solve_ivp
+from scipy.integrate._ivp.ivp import OdeResult
+import matplotlib.pyplot as plt
+
+
+class Sdof:
+    &#34;&#34;&#34;
+    Class for single-degree-of-freedom system
+    Parameters :
+    You should provide at least wn or T or (m and k).
+        Input:
+        -------
+            m : scalar
+                mass of the system
+            c : scalar
+                damping constant
+            k : scalar
+                stiffness
+            xi : scalar
+                 damping ratio
+            wn : scalar
+                 Natural Frequency (rad/s)
+            T : scalar
+                Natural Period
+    &#34;&#34;&#34;
+
+    def __init__(self, m=None, c=0.0, k=None, xi=0.0, wn=None, T=None):
+        if T:
+            wn = 2*np.pi/T
+            m = 1.0
+            k = m*wn**2
+            c = 2*xi*m*wn
+        elif wn:
+            T = 2*np.pi/wn
+            m = 1.0
+            k = m*wn**2
+            c = 2*xi*m*wn
+        elif (k and m):
+            wn = np.sqrt(k/m)
+            T = 2*np.pi/wn
+            if xi:
+                c = 2*xi*m*wn
+            elif c:
+                xi = c/(2*m*wn)
+        else:
+            raise Exception(&#34;Incorrect parameters&#34;)
+
+        self.m, self.c, self.k = m, c, k
+        self.xi, self.wn, self.T = xi, wn, T
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def sdof_grad(self, t, y, tv, f):
+        m, c, k = self.m, self.c, self.k
+        ft = np.interp(t, tv, f)
+
+        A = np.array([
+            [0, 1],
+            [-k/m, -c/m]
+            ])
+        x = np.array(y)
+        f = np.array([
+            [0.0],
+            [ft/m]
+            ])
+        dy = np.matmul(A, x) + f
+
+        return dy
+
+    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        &#34;&#34;&#34;
+        Wrapper around solve_ivp module from scipy.integrate. It supports all
+        the arguments supported by solve_ivp.
+
+        Input :
+        ts (timeseries object): timeseries defining loading/base excitation
+        tsType (string): &#34;baseExcitation&#34; or &#34;force&#34;
+
+        **kwargs: arguments acceptable to scipy solve_ivp module
+        By default the solution will be obtained for duration = 2 * (ts.t duration).
+        This can be changed using t_span argument. Default method : BDF.
+        &#34;&#34;&#34;
+        if tsType == &#34;baseExcitation&#34;:
+            f = -self.m * ts.y
+        elif tsType == &#34;force&#34;:
+            f = ts.y
+        else:
+            raise Exception(&#34;Incorrect timeseries type given&#34;)
+
+        defaultArgs = {
+            &#34;t_span&#34;: (ts.t[0], ts.t[-1]*2),
+            &#34;y0&#34;: [0.0, 0.0],
+            &#34;method&#34;: &#34;BDF&#34;,
+            &#34;t_eval&#34;: None,
+            &#34;dense_output&#34;: False,
+            &#34;events&#34;: None,
+            &#34;vectorized&#34;: True,
+            &#34;args&#34;: (ts.t, f),
+            &#34;jac&#34;: np.array([
+                [0, 1],
+                [-self.k/self.m, -self.c/self.m]
+                ])
+            }
+        kwargs = {**defaultArgs, **kwargs}
+
+        # r = solve_ivp(self.sdof_grad, **kwargs)
+        r = solve_ivp(self.sdof_grad, **kwargs)
+        m, c, k = self.m, self.c, self.k
+        fv = np.interp(r.t, ts.t, f)
+        acc = 1/m*(fv - c*r.y[1] - k*r.y[0])
+        return SdofResponseTimeSeries(r, acc)
+
+
+class SdofResponseTimeSeries(OdeResult):
+    &#34;&#34;&#34;
+    Class for response object of SDOF system
+    &#34;&#34;&#34;
+    def __init__(self, ode_result, acc):
+        self.acc = acc
+        for key, val in ode_result.items():
+            self.__setattr__(key, val)
+
+    def plot(self, **kwargs):
+        y = np.transpose(self.y)
+        fig, ax = plt.subplots(nrows=1, ncols=len(self.y), **kwargs)
+        for i in range(len(self.y)):
+            ax[i].plot(self.t, self.y[i], linewidth=0.5, color=&#34;black&#34;)
+            ax[i].set_xlabel(&#34;Time (s)&#34;)
+        return fig</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="earthquakepy.singledof.Sdof"><code class="flex name class">
+<span>class <span class="ident">Sdof</span></span>
+<span>(</span><span>m=None, c=0.0, k=None, xi=0.0, wn=None, T=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class for single-degree-of-freedom system
+Parameters :
+You should provide at least wn or T or (m and k).
+Input:
+-------
+m : scalar
+mass of the system
+c : scalar
+damping constant
+k : scalar
+stiffness
+xi : scalar
+damping ratio
+wn : scalar
+Natural Frequency (rad/s)
+T : scalar
+Natural Period</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Sdof:
+    &#34;&#34;&#34;
+    Class for single-degree-of-freedom system
+    Parameters :
+    You should provide at least wn or T or (m and k).
+        Input:
+        -------
+            m : scalar
+                mass of the system
+            c : scalar
+                damping constant
+            k : scalar
+                stiffness
+            xi : scalar
+                 damping ratio
+            wn : scalar
+                 Natural Frequency (rad/s)
+            T : scalar
+                Natural Period
+    &#34;&#34;&#34;
+
+    def __init__(self, m=None, c=0.0, k=None, xi=0.0, wn=None, T=None):
+        if T:
+            wn = 2*np.pi/T
+            m = 1.0
+            k = m*wn**2
+            c = 2*xi*m*wn
+        elif wn:
+            T = 2*np.pi/wn
+            m = 1.0
+            k = m*wn**2
+            c = 2*xi*m*wn
+        elif (k and m):
+            wn = np.sqrt(k/m)
+            T = 2*np.pi/wn
+            if xi:
+                c = 2*xi*m*wn
+            elif c:
+                xi = c/(2*m*wn)
+        else:
+            raise Exception(&#34;Incorrect parameters&#34;)
+
+        self.m, self.c, self.k = m, c, k
+        self.xi, self.wn, self.T = xi, wn, T
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def sdof_grad(self, t, y, tv, f):
+        m, c, k = self.m, self.c, self.k
+        ft = np.interp(t, tv, f)
+
+        A = np.array([
+            [0, 1],
+            [-k/m, -c/m]
+            ])
+        x = np.array(y)
+        f = np.array([
+            [0.0],
+            [ft/m]
+            ])
+        dy = np.matmul(A, x) + f
+
+        return dy
+
+    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        &#34;&#34;&#34;
+        Wrapper around solve_ivp module from scipy.integrate. It supports all
+        the arguments supported by solve_ivp.
+
+        Input :
+        ts (timeseries object): timeseries defining loading/base excitation
+        tsType (string): &#34;baseExcitation&#34; or &#34;force&#34;
+
+        **kwargs: arguments acceptable to scipy solve_ivp module
+        By default the solution will be obtained for duration = 2 * (ts.t duration).
+        This can be changed using t_span argument. Default method : BDF.
+        &#34;&#34;&#34;
+        if tsType == &#34;baseExcitation&#34;:
+            f = -self.m * ts.y
+        elif tsType == &#34;force&#34;:
+            f = ts.y
+        else:
+            raise Exception(&#34;Incorrect timeseries type given&#34;)
+
+        defaultArgs = {
+            &#34;t_span&#34;: (ts.t[0], ts.t[-1]*2),
+            &#34;y0&#34;: [0.0, 0.0],
+            &#34;method&#34;: &#34;BDF&#34;,
+            &#34;t_eval&#34;: None,
+            &#34;dense_output&#34;: False,
+            &#34;events&#34;: None,
+            &#34;vectorized&#34;: True,
+            &#34;args&#34;: (ts.t, f),
+            &#34;jac&#34;: np.array([
+                [0, 1],
+                [-self.k/self.m, -self.c/self.m]
+                ])
+            }
+        kwargs = {**defaultArgs, **kwargs}
+
+        # r = solve_ivp(self.sdof_grad, **kwargs)
+        r = solve_ivp(self.sdof_grad, **kwargs)
+        m, c, k = self.m, self.c, self.k
+        fv = np.interp(r.t, ts.t, f)
+        acc = 1/m*(fv - c*r.y[1] - k*r.y[0])
+        return SdofResponseTimeSeries(r, acc)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="earthquakepy.singledof.Sdof.get_response"><code class="name flex">
+<span>def <span class="ident">get_response</span></span>(<span>self, ts, tsType='baseExcitation', **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper around solve_ivp module from scipy.integrate. It supports all
+the arguments supported by solve_ivp.</p>
+<p>Input :
+ts (timeseries object): timeseries defining loading/base excitation
+tsType (string): "baseExcitation" or "force"</p>
+<p>**kwargs: arguments acceptable to scipy solve_ivp module
+By default the solution will be obtained for duration = 2 * (ts.t duration).
+This can be changed using t_span argument. Default method : BDF.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+    &#34;&#34;&#34;
+    Wrapper around solve_ivp module from scipy.integrate. It supports all
+    the arguments supported by solve_ivp.
+
+    Input :
+    ts (timeseries object): timeseries defining loading/base excitation
+    tsType (string): &#34;baseExcitation&#34; or &#34;force&#34;
+
+    **kwargs: arguments acceptable to scipy solve_ivp module
+    By default the solution will be obtained for duration = 2 * (ts.t duration).
+    This can be changed using t_span argument. Default method : BDF.
+    &#34;&#34;&#34;
+    if tsType == &#34;baseExcitation&#34;:
+        f = -self.m * ts.y
+    elif tsType == &#34;force&#34;:
+        f = ts.y
+    else:
+        raise Exception(&#34;Incorrect timeseries type given&#34;)
+
+    defaultArgs = {
+        &#34;t_span&#34;: (ts.t[0], ts.t[-1]*2),
+        &#34;y0&#34;: [0.0, 0.0],
+        &#34;method&#34;: &#34;BDF&#34;,
+        &#34;t_eval&#34;: None,
+        &#34;dense_output&#34;: False,
+        &#34;events&#34;: None,
+        &#34;vectorized&#34;: True,
+        &#34;args&#34;: (ts.t, f),
+        &#34;jac&#34;: np.array([
+            [0, 1],
+            [-self.k/self.m, -self.c/self.m]
+            ])
+        }
+    kwargs = {**defaultArgs, **kwargs}
+
+    # r = solve_ivp(self.sdof_grad, **kwargs)
+    r = solve_ivp(self.sdof_grad, **kwargs)
+    m, c, k = self.m, self.c, self.k
+    fv = np.interp(r.t, ts.t, f)
+    acc = 1/m*(fv - c*r.y[1] - k*r.y[0])
+    return SdofResponseTimeSeries(r, acc)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.singledof.Sdof.sdof_grad"><code class="name flex">
+<span>def <span class="ident">sdof_grad</span></span>(<span>self, t, y, tv, f)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sdof_grad(self, t, y, tv, f):
+    m, c, k = self.m, self.c, self.k
+    ft = np.interp(t, tv, f)
+
+    A = np.array([
+        [0, 1],
+        [-k/m, -c/m]
+        ])
+    x = np.array(y)
+    f = np.array([
+        [0.0],
+        [ft/m]
+        ])
+    dy = np.matmul(A, x) + f
+
+    return dy</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="earthquakepy.singledof.SdofResponseTimeSeries"><code class="flex name class">
+<span>class <span class="ident">SdofResponseTimeSeries</span></span>
+<span>(</span><span>ode_result, acc)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class for response object of SDOF system</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SdofResponseTimeSeries(OdeResult):
+    &#34;&#34;&#34;
+    Class for response object of SDOF system
+    &#34;&#34;&#34;
+    def __init__(self, ode_result, acc):
+        self.acc = acc
+        for key, val in ode_result.items():
+            self.__setattr__(key, val)
+
+    def plot(self, **kwargs):
+        y = np.transpose(self.y)
+        fig, ax = plt.subplots(nrows=1, ncols=len(self.y), **kwargs)
+        for i in range(len(self.y)):
+            ax[i].plot(self.t, self.y[i], linewidth=0.5, color=&#34;black&#34;)
+            ax[i].set_xlabel(&#34;Time (s)&#34;)
+        return fig</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>scipy.integrate._ivp.ivp.OdeResult</li>
+<li>scipy.optimize._optimize.OptimizeResult</li>
+<li>builtins.dict</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="earthquakepy.singledof.SdofResponseTimeSeries.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot(self, **kwargs):
+    y = np.transpose(self.y)
+    fig, ax = plt.subplots(nrows=1, ncols=len(self.y), **kwargs)
+    for i in range(len(self.y)):
+        ax[i].plot(self.t, self.y[i], linewidth=0.5, color=&#34;black&#34;)
+        ax[i].set_xlabel(&#34;Time (s)&#34;)
+    return fig</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="earthquakepy" href="index.html">earthquakepy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="earthquakepy.singledof.Sdof" href="#earthquakepy.singledof.Sdof">Sdof</a></code></h4>
+<ul class="">
+<li><code><a title="earthquakepy.singledof.Sdof.get_response" href="#earthquakepy.singledof.Sdof.get_response">get_response</a></code></li>
+<li><code><a title="earthquakepy.singledof.Sdof.sdof_grad" href="#earthquakepy.singledof.Sdof.sdof_grad">sdof_grad</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="earthquakepy.singledof.SdofResponseTimeSeries" href="#earthquakepy.singledof.SdofResponseTimeSeries">SdofResponseTimeSeries</a></code></h4>
+<ul class="">
+<li><code><a title="earthquakepy.singledof.SdofResponseTimeSeries.plot" href="#earthquakepy.singledof.SdofResponseTimeSeries.plot">plot</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,2294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>earthquakepy.timeseries API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>earthquakepy.timeseries</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import numpy as np
+from scipy.integrate import trapz, cumtrapz
+import matplotlib.pyplot as plt
+from .singledof import Sdof
+from scipy.fftpack import fft, fftfreq
+
+
+class TimeSeries:
+    &#34;&#34;&#34;
+    TimeSeries object class
+    Defines time series
+    &#34;&#34;&#34;
+
+    def __init__(self, t, y):
+        &#34;&#34;&#34;
+        Time series object initiation with
+        t and y as lists or 1D arrays.
+        If t is a scalar, then the array is
+        autogenerated with scalar value as dt.
+        &#34;&#34;&#34;
+        if (type(t) == float) or (type(t) == int):
+            t = np.arange(0.0, len(y) * t - 0.1 * t, t)
+        self.t = t
+        self.y = y
+        self.npts = len(t)
+        self.dt = t[1] - t[0]
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def set_tunit(self, unit):
+        &#34;&#34;&#34;
+        Set unit for T(time) coordinates.
+        Unit should be a string.
+        &#34;&#34;&#34;
+        self.tunit = unit
+
+    def set_yunit(self, unit):
+        &#34;&#34;&#34;
+        Set unit for y coordinates.
+        Unit should be a string.
+        &#34;&#34;&#34;
+        self.yunit = unit
+
+    def set_t(self, coords):
+        &#34;&#34;&#34;
+        Set T(time) coordinates.
+        Should be a list or numpy array (1D)
+        &#34;&#34;&#34;
+        self.t = coords
+
+    def set_eqname(self, name):
+        &#34;&#34;&#34;Set earthquake name&#34;&#34;&#34;
+        self.eqName = name
+
+    def set_eqdate(self, date):
+        &#34;&#34;&#34;Set earthquake date&#34;&#34;&#34;
+        self.eqDate = date
+
+    def set_station(self, station):
+        &#34;&#34;&#34;Recording station&#34;&#34;&#34;
+        self.station = station
+
+    def set_component(self, comp):
+        &#34;&#34;&#34;Directional component of record&#34;&#34;&#34;
+        self.component = comp
+
+    def set_dt(self, dt):
+        &#34;&#34;&#34;Time step between data points&#34;&#34;&#34;
+        self.dt = dt
+
+    def set_npts(self, npts):
+        &#34;&#34;&#34;Total number of points in the record&#34;&#34;&#34;
+        self.npts = npts
+
+    def set_time(self, time):
+        &#34;&#34;&#34;Total duration of the record in seconds&#34;&#34;&#34;
+        self.time = time
+
+    def set_filepath(self, filepath):
+        &#34;&#34;&#34;Record filepath&#34;&#34;&#34;
+        self.filepath = filepath
+
+    def plot(self, log=False, **kwargs):
+        &#34;&#34;&#34;
+        Method plots time history of timeseries object.
+        It accepts all the arguments that matplotlib.pyplot.subplots recognizes.
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots(**kwargs)
+        ax.plot(self.t, self.y, color=&#34;black&#34;, linewidth=0.5)
+        if hasattr(self, &#34;tunit&#34;):
+            ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
+        if hasattr(self, &#34;yunit&#34;):
+            ax.set_ylabel(str(self.yunit))
+        if log:
+            ax.set_xscale(&#34;log&#34;)
+        # plt.show()
+        return fig
+
+    def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
+        &#34;&#34;&#34;
+        Calculates linear elastic response spectra associated with the timeseries.
+        Inputs:
+        Tstart and Tend (floats): Periods corresponding to spectrum width
+        dT (float): Step size for period
+        xi (float): damping ratio
+
+        Retuens:
+        ResponseSpectrum object with T, Sd, Sv, Sa as attributes.
+        Where T: Period
+        Sd, Sv, Sa: Spectral displacement, velocity and acceleration, respectively.
+        &#34;&#34;&#34;
+        specLength = len(T)
+        Sd = np.empty(specLength)
+        Sv = np.empty(specLength)
+        Sa = np.empty(specLength)
+        for i in range(specLength):
+            s = Sdof(T=T[i], xi=xi)
+            r = s.get_response(self, tsType=&#34;baseExcitation&#34;)
+            D = np.max(np.abs(r.y[0]))
+            V = np.max(np.abs(r.y[1]))
+            A = np.max(np.abs(r.acc))
+            Sd[i] = D
+            Sv[i] = V
+            Sa[i] = A
+        return ResponseSpectrum(T, Sd, Sv, Sa)
+
+    def get_fourier_spectrum(self):
+        &#34;&#34;&#34;
+        Computes fourier spectrum associated with the time series
+        &#34;&#34;&#34;
+        N = self.npts
+        T = self.dt  # sampling interval
+        yf = fft(self.y)
+        # FAmp = np.abs(yf[0:N//2])
+        freq = fftfreq(N, T)  # [:N//2]
+        return FourierSpectrum(freq, yf, N)
+
+    def get_power_spectrum(self):
+        &#34;&#34;&#34;
+        Computes power spectrum associated with the time series
+        &#34;&#34;&#34;
+        N = self.npts
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        df = freq[1] - freq[0]
+        powerAmp = 2.0 / df * fourier_spectrum.amplitude**2
+        return PowerSpectrum(freq, powerAmp, N)
+
+    def get_mean_period(self):
+        &#34;&#34;&#34;
+        Computes the simplified frequency content characterisation parameter according to  Rathje et al. [1998]
+        Returns
+        -------
+        Scalar:
+            Mean period
+
+        &#34;&#34;&#34;
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        FAmp = fourier_spectrum.amplitude
+        boolArr = (freq &gt; 0.25) &amp; (freq &lt; 20)
+        n = FAmp[boolArr] ** 2 / freq[boolArr]
+        n = n.sum()
+        d = FAmp[boolArr] ** 2
+        d = d.sum()
+        return n / d
+
+    def get_mean_frequency(self):
+        &#34;&#34;&#34;
+        Computes the simplified frequency content characterisation parameter according to  Schnabel [1973]
+        Returns
+        -------
+        Scalar:
+            Mean square frequency
+
+        &#34;&#34;&#34;
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        FAmp = fourier_spectrum.amplitude
+        boolArr = (freq &gt; 0.25) &amp; (freq &lt; 20)
+        n = FAmp[boolArr] ** 2 * freq[boolArr]
+        n = n.sum()
+        d = FAmp[boolArr] ** 2
+        d = d.sum()
+        return n / d
+
+    def get_epsilon(self):
+        &#34;&#34;&#34;
+        Computes the dimensionless frequency indicator, epsilon as given by Clough and Penzien
+        Returns
+        -------
+        Scalar
+
+        &#34;&#34;&#34;
+        from scipy.integrate import trapz
+
+        power_spectrum = self.get_power_spectrum()
+        freq = power_spectrum.frequencies
+        powerAmp = power_spectrum.amplitude
+        m0 = trapz(powerAmp, freq)
+        m2 = trapz(powerAmp * freq**2, freq)
+        m4 = trapz(powerAmp * freq**4, freq)
+        eps = np.sqrt(1 - m2**2 / (m0 * m4))
+        return eps
+
+    def get_arias_intensity(self, g=False):
+        &#34;&#34;&#34;
+        Computes arias intensity:
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+        Returns
+        -------
+        array like:
+            Arias intensity time series
+
+        &#34;&#34;&#34;
+        acc = self.y
+        dt = self.dt
+        if g:
+            acc = acc * 9.81
+
+        iaSeries = np.pi / (2 * 9.81) * cumtrapz(acc**2, dx=dt, initial=0)
+        return iaSeries
+
+    def get_total_arias(self, g=False):
+        &#34;&#34;&#34;
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Total Arias Intensity
+
+        &#34;&#34;&#34;
+        acc = self.y
+        dt = self.dt
+        if g:
+            acc = acc * 9.81
+
+        ia = np.pi / (2 * 9.81) * trapz(acc**2, dx=dt)
+        return ia
+
+    def get_sig_duration(self, g=False, start=0.05, stop=0.95):
+        &#34;&#34;&#34;
+
+        Computes significant duration as portion of ground motion encompassing 5% to 95% of total arias intensity
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        start: float, optional
+            defines the start point in fraction of total arias intensity from where significant duration starts.
+
+        stop: float, optional
+            defines the end point in fraction of total arias intensity where significant duration ends.
+
+        Returns
+        -------
+        Scalar:
+            Significant Duration (5-95)%
+
+        &#34;&#34;&#34;
+        dt = self.dt
+        cumIa = self.get_arias_intensity(g=g)
+        index = np.where((cumIa &gt; start * cumIa[-1]) &amp; (cumIa &lt; stop * cumIa[-1]))
+        return index[0][-1] * dt - index[0][0] * dt
+
+    def get_destructive_potential(self, g=False):
+        &#34;&#34;&#34;
+        Computes destructiveness potential according to Araya and Sargoni (1984)
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Destructiveness potential
+
+        &#34;&#34;&#34;
+        acc = self.y
+        ia = self.get_total_arias(g=g)
+        u0 = len(np.where(np.diff(np.sign(acc)))[0])
+        return ia / u0**2
+
+    def get_cum_abs_vel(self, g=False):
+        &#34;&#34;&#34;
+        Computes cummulative absolute velocity
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Cummulative Absolute Velocity
+
+        &#34;&#34;&#34;
+        acc = self.y
+        dt = self.dt
+        if g:
+            acc = acc * 9.81
+        acc = np.absolute(acc)
+        return trapz(acc, dx=dt)
+
+    def get_cum_abs_disp(self):
+        &#34;&#34;&#34;
+        Computes Cummulative Absolute Displacement
+
+        Note
+            Please make sure to use velocity time series as input to compute cummulative absolute displacement.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Scalar:
+            Cummulative Absolute Velocity
+
+        &#34;&#34;&#34;
+        vel = self.y
+        dt = self.dt
+        vel = np.absolute(vel)
+        return trapz(vel, dx=dt)
+
+    def get_specific_energy(self):
+        &#34;&#34;&#34;
+
+        Computes specific energy density
+
+        Note
+            Please use velocity time series as input to compute specific energy density.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Scalar:
+            Specify Energy Density
+
+        &#34;&#34;&#34;
+        vel = self.y
+        dt = self.dt
+        return trapz(vel**2, dx=dt)
+
+    def get_rms(self, g=False):
+        &#34;&#34;&#34;
+
+        Root-mean-square value of acceleration/velocity/displacement time series
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Root-mean-square value of time series values
+
+
+        &#34;&#34;&#34;
+        val = self.y
+        total_time = self.time
+        dt = self.dt
+        return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)
+
+
+class ResponseSpectrum:
+    def __init__(self, T, Sd, Sv, Sa):
+        &#34;&#34;&#34;
+        Class for storing response spectra
+        Inputs:
+        T (array of float): Natural period
+        Sd, Sv(not implemented), Sa(not implemented) (array of float): Spectral displacement, velocity and acceleration, respectively.
+        &#34;&#34;&#34;
+        self.T = T
+        self.Sd = Sd
+        self.Sv = Sv
+        self.Sa = Sa
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def plot(self, log=False, **kwargs):
+        &#34;&#34;&#34;
+        Method plots Response Spectrum of ResponseSpectrum object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
+        ax[0].plot(self.T, self.Sd, color=&#34;black&#34;, linewidth=0.5)
+        ax[1].plot(self.T, self.Sv, color=&#34;black&#34;, linewidth=0.5)
+        ax[2].plot(self.T, self.Sa, color=&#34;black&#34;, linewidth=0.5)
+        ax[0].set_xlabel(&#34;Period (s)&#34;)
+        ax[1].set_xlabel(&#34;Period (s)&#34;)
+        ax[2].set_xlabel(&#34;Period (s)&#34;)
+        ax[0].set_ylabel(&#34;Spectral displacement&#34;)
+        ax[1].set_ylabel(&#34;Spectral velocity&#34;)
+        ax[2].set_ylabel(&#34;Spectral acceleration&#34;)
+        if log:
+            ax[0].set_xscale(&#34;log&#34;)
+            ax[0].set_yscale(&#34;log&#34;)
+            ax[1].set_xscale(&#34;log&#34;)
+            ax[1].set_yscale(&#34;log&#34;)
+            ax[2].set_xscale(&#34;log&#34;)
+            ax[2].set_yscale(&#34;log&#34;)
+        # plt.show()
+        return fig
+
+
+class FourierSpectrum:
+    def __init__(self, frequencies, ordinate, N):
+        &#34;&#34;&#34;
+        Class to store fourier spectra
+        Parameters
+        ----------
+        Freqencies : Frequency (Hz)
+        Amplitude : Fourier Amplitude
+        &#34;&#34;&#34;
+        self.frequencies = frequencies
+        self.ordinate = ordinate
+        # Famp = np.abs(ordinate[0:N//2])
+        # phase = np.angle(ordinate[0:N//2])
+        self.amplitude = np.abs(ordinate)
+        self.phase = np.angle(ordinate)
+        self.N = N
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def plot(self, log=False, **kwargs):
+        &#34;&#34;&#34;
+        Method plots Fourier Spectrum of FourierSpectrum object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
+        ax[0].set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax[0].set_ylabel(&#34;Fourier Amplitude&#34;)
+        ax[0].plot(
+            self.frequencies,
+            2.0 / self.N * self.amplitude,
+            color=&#34;black&#34;,
+            linewidth=0.5,
+        )
+        ax[1].set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax[1].set_ylabel(&#34;Phase angle&#34;)
+        ax[1].plot(self.frequencies, self.phase, color=&#34;black&#34;, linewidth=0.5)
+        ax[2].set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax[2].set_ylabel(&#34;Unwrapped phase angle&#34;)
+        ax[2].plot(
+            self.frequencies, np.unwrap(self.phase), color=&#34;black&#34;, linewidth=0.5
+        )
+        if log:
+            ax[0].set_xscale(&#34;log&#34;)
+        return fig
+
+
+class PowerSpectrum:
+    def __init__(self, frequencies, amplitude, N):
+        &#34;&#34;&#34;
+        Class to store power spectra
+        Parameters
+        ----------
+        Freqencies : Frequency (Hz)
+        Amplitude : Power Amplitude
+        &#34;&#34;&#34;
+        self.frequencies = frequencies
+        self.amplitude = amplitude
+        self.N = N
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def get_compatible_timehistories(self, m=5):
+        &#34;&#34;&#34;
+        Generates m compatible timehistories from power spectrum
+        Input:
+            m (int): number of compatible timehistories to generate
+        Output:
+            list of timeseries objects
+        &#34;&#34;&#34;
+        # get FFT amplitude from power amplitude
+        dF = self.frequencies[1] - self.frequencies[0]
+        Xamp = np.sqrt(dF / 2.0 * self.amplitude)
+        n = len(Xamp)
+
+        dt = 1 / (2 * np.max(self.frequencies))
+        endT = 1 / dF
+        t = np.linspace(0, endT - dt, len(self.frequencies))
+
+        X = np.complex_(np.zeros((n, m)))
+        x = np.complex_(np.zeros((n, m)))
+        Xphase = np.complex_(np.zeros(n))
+
+        ts = [None] * m
+
+        for k in range(m):
+            if np.mod(n, 2) == 0:  # even number of samples
+                Xphase[1 : n // 2] = 2 * np.pi * np.random.rand(n // 2 - 1)
+                Xphase[n // 2 + 1 :] = -np.flip(Xphase[1 : n // 2])
+            else:
+                Xphase[1 : (n + 1) // 2] = n * np.pi * np.random.rand((n + 1) // 2 - 1)
+                Xphase[(n + 1) // 2 :] = -np.flip(Xphase[1 : (n + 1) // 2])
+
+            X[:, k] = Xamp * (np.cos(Xphase) + 1j * np.sin(Xphase))
+            x[:, k] = np.fft.ifft(X[:, k])
+
+            ts[k] = TimeSeries(t, np.real(x[:, k]))
+        return ts
+
+    def plot(self, log=False):
+        &#34;&#34;&#34;
+        Method plots Power Spectrum of PowerSpectrum object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots()
+        ax.plot(
+            self.frequencies,
+            2.0 / self.N * self.amplitude,
+            color=&#34;black&#34;,
+            linewidth=0.5,
+        )
+        ax.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax.set_ylabel(&#34;Power Amplitude&#34;)
+        if log:
+            ax.set_xscale(&#34;log&#34;)
+        # plt.show()
+        return fig</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="earthquakepy.timeseries.FourierSpectrum"><code class="flex name class">
+<span>class <span class="ident">FourierSpectrum</span></span>
+<span>(</span><span>frequencies, ordinate, N)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class to store fourier spectra
+Parameters</p>
+<hr>
+<dl>
+<dt><strong><code>Freqencies</code></strong> :&ensp;<code>Frequency (Hz)</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>Amplitude</code></strong> :&ensp;<code>Fourier Amplitude</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FourierSpectrum:
+    def __init__(self, frequencies, ordinate, N):
+        &#34;&#34;&#34;
+        Class to store fourier spectra
+        Parameters
+        ----------
+        Freqencies : Frequency (Hz)
+        Amplitude : Fourier Amplitude
+        &#34;&#34;&#34;
+        self.frequencies = frequencies
+        self.ordinate = ordinate
+        # Famp = np.abs(ordinate[0:N//2])
+        # phase = np.angle(ordinate[0:N//2])
+        self.amplitude = np.abs(ordinate)
+        self.phase = np.angle(ordinate)
+        self.N = N
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def plot(self, log=False, **kwargs):
+        &#34;&#34;&#34;
+        Method plots Fourier Spectrum of FourierSpectrum object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
+        ax[0].set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax[0].set_ylabel(&#34;Fourier Amplitude&#34;)
+        ax[0].plot(
+            self.frequencies,
+            2.0 / self.N * self.amplitude,
+            color=&#34;black&#34;,
+            linewidth=0.5,
+        )
+        ax[1].set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax[1].set_ylabel(&#34;Phase angle&#34;)
+        ax[1].plot(self.frequencies, self.phase, color=&#34;black&#34;, linewidth=0.5)
+        ax[2].set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax[2].set_ylabel(&#34;Unwrapped phase angle&#34;)
+        ax[2].plot(
+            self.frequencies, np.unwrap(self.phase), color=&#34;black&#34;, linewidth=0.5
+        )
+        if log:
+            ax[0].set_xscale(&#34;log&#34;)
+        return fig</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="earthquakepy.timeseries.FourierSpectrum.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self, log=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Method plots Fourier Spectrum of FourierSpectrum object
+Parameters</p>
+<hr>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Matplotlib Figure Object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot(self, log=False, **kwargs):
+    &#34;&#34;&#34;
+    Method plots Fourier Spectrum of FourierSpectrum object
+    Parameters
+    ----------
+    Returns
+    -------
+    Matplotlib Figure Object
+
+    &#34;&#34;&#34;
+    fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
+    ax[0].set_xlabel(&#34;Frequency (Hz)&#34;)
+    ax[0].set_ylabel(&#34;Fourier Amplitude&#34;)
+    ax[0].plot(
+        self.frequencies,
+        2.0 / self.N * self.amplitude,
+        color=&#34;black&#34;,
+        linewidth=0.5,
+    )
+    ax[1].set_xlabel(&#34;Frequency (Hz)&#34;)
+    ax[1].set_ylabel(&#34;Phase angle&#34;)
+    ax[1].plot(self.frequencies, self.phase, color=&#34;black&#34;, linewidth=0.5)
+    ax[2].set_xlabel(&#34;Frequency (Hz)&#34;)
+    ax[2].set_ylabel(&#34;Unwrapped phase angle&#34;)
+    ax[2].plot(
+        self.frequencies, np.unwrap(self.phase), color=&#34;black&#34;, linewidth=0.5
+    )
+    if log:
+        ax[0].set_xscale(&#34;log&#34;)
+    return fig</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="earthquakepy.timeseries.PowerSpectrum"><code class="flex name class">
+<span>class <span class="ident">PowerSpectrum</span></span>
+<span>(</span><span>frequencies, amplitude, N)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class to store power spectra
+Parameters</p>
+<hr>
+<dl>
+<dt><strong><code>Freqencies</code></strong> :&ensp;<code>Frequency (Hz)</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>Amplitude</code></strong> :&ensp;<code>Power Amplitude</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PowerSpectrum:
+    def __init__(self, frequencies, amplitude, N):
+        &#34;&#34;&#34;
+        Class to store power spectra
+        Parameters
+        ----------
+        Freqencies : Frequency (Hz)
+        Amplitude : Power Amplitude
+        &#34;&#34;&#34;
+        self.frequencies = frequencies
+        self.amplitude = amplitude
+        self.N = N
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def get_compatible_timehistories(self, m=5):
+        &#34;&#34;&#34;
+        Generates m compatible timehistories from power spectrum
+        Input:
+            m (int): number of compatible timehistories to generate
+        Output:
+            list of timeseries objects
+        &#34;&#34;&#34;
+        # get FFT amplitude from power amplitude
+        dF = self.frequencies[1] - self.frequencies[0]
+        Xamp = np.sqrt(dF / 2.0 * self.amplitude)
+        n = len(Xamp)
+
+        dt = 1 / (2 * np.max(self.frequencies))
+        endT = 1 / dF
+        t = np.linspace(0, endT - dt, len(self.frequencies))
+
+        X = np.complex_(np.zeros((n, m)))
+        x = np.complex_(np.zeros((n, m)))
+        Xphase = np.complex_(np.zeros(n))
+
+        ts = [None] * m
+
+        for k in range(m):
+            if np.mod(n, 2) == 0:  # even number of samples
+                Xphase[1 : n // 2] = 2 * np.pi * np.random.rand(n // 2 - 1)
+                Xphase[n // 2 + 1 :] = -np.flip(Xphase[1 : n // 2])
+            else:
+                Xphase[1 : (n + 1) // 2] = n * np.pi * np.random.rand((n + 1) // 2 - 1)
+                Xphase[(n + 1) // 2 :] = -np.flip(Xphase[1 : (n + 1) // 2])
+
+            X[:, k] = Xamp * (np.cos(Xphase) + 1j * np.sin(Xphase))
+            x[:, k] = np.fft.ifft(X[:, k])
+
+            ts[k] = TimeSeries(t, np.real(x[:, k]))
+        return ts
+
+    def plot(self, log=False):
+        &#34;&#34;&#34;
+        Method plots Power Spectrum of PowerSpectrum object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots()
+        ax.plot(
+            self.frequencies,
+            2.0 / self.N * self.amplitude,
+            color=&#34;black&#34;,
+            linewidth=0.5,
+        )
+        ax.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax.set_ylabel(&#34;Power Amplitude&#34;)
+        if log:
+            ax.set_xscale(&#34;log&#34;)
+        # plt.show()
+        return fig</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="earthquakepy.timeseries.PowerSpectrum.get_compatible_timehistories"><code class="name flex">
+<span>def <span class="ident">get_compatible_timehistories</span></span>(<span>self, m=5)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates m compatible timehistories from power spectrum</p>
+<h2 id="input">Input</h2>
+<p>m (int): number of compatible timehistories to generate</p>
+<h2 id="output">Output</h2>
+<p>list of timeseries objects</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_compatible_timehistories(self, m=5):
+    &#34;&#34;&#34;
+    Generates m compatible timehistories from power spectrum
+    Input:
+        m (int): number of compatible timehistories to generate
+    Output:
+        list of timeseries objects
+    &#34;&#34;&#34;
+    # get FFT amplitude from power amplitude
+    dF = self.frequencies[1] - self.frequencies[0]
+    Xamp = np.sqrt(dF / 2.0 * self.amplitude)
+    n = len(Xamp)
+
+    dt = 1 / (2 * np.max(self.frequencies))
+    endT = 1 / dF
+    t = np.linspace(0, endT - dt, len(self.frequencies))
+
+    X = np.complex_(np.zeros((n, m)))
+    x = np.complex_(np.zeros((n, m)))
+    Xphase = np.complex_(np.zeros(n))
+
+    ts = [None] * m
+
+    for k in range(m):
+        if np.mod(n, 2) == 0:  # even number of samples
+            Xphase[1 : n // 2] = 2 * np.pi * np.random.rand(n // 2 - 1)
+            Xphase[n // 2 + 1 :] = -np.flip(Xphase[1 : n // 2])
+        else:
+            Xphase[1 : (n + 1) // 2] = n * np.pi * np.random.rand((n + 1) // 2 - 1)
+            Xphase[(n + 1) // 2 :] = -np.flip(Xphase[1 : (n + 1) // 2])
+
+        X[:, k] = Xamp * (np.cos(Xphase) + 1j * np.sin(Xphase))
+        x[:, k] = np.fft.ifft(X[:, k])
+
+        ts[k] = TimeSeries(t, np.real(x[:, k]))
+    return ts</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.PowerSpectrum.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self, log=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Method plots Power Spectrum of PowerSpectrum object
+Parameters</p>
+<hr>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Matplotlib Figure Object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot(self, log=False):
+    &#34;&#34;&#34;
+    Method plots Power Spectrum of PowerSpectrum object
+    Parameters
+    ----------
+    Returns
+    -------
+    Matplotlib Figure Object
+
+    &#34;&#34;&#34;
+    fig, ax = plt.subplots()
+    ax.plot(
+        self.frequencies,
+        2.0 / self.N * self.amplitude,
+        color=&#34;black&#34;,
+        linewidth=0.5,
+    )
+    ax.set_xlabel(&#34;Frequency (Hz)&#34;)
+    ax.set_ylabel(&#34;Power Amplitude&#34;)
+    if log:
+        ax.set_xscale(&#34;log&#34;)
+    # plt.show()
+    return fig</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="earthquakepy.timeseries.ResponseSpectrum"><code class="flex name class">
+<span>class <span class="ident">ResponseSpectrum</span></span>
+<span>(</span><span>T, Sd, Sv, Sa)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class for storing response spectra
+Inputs:
+T (array of float): Natural period
+Sd, Sv(not implemented), Sa(not implemented) (array of float): Spectral displacement, velocity and acceleration, respectively.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ResponseSpectrum:
+    def __init__(self, T, Sd, Sv, Sa):
+        &#34;&#34;&#34;
+        Class for storing response spectra
+        Inputs:
+        T (array of float): Natural period
+        Sd, Sv(not implemented), Sa(not implemented) (array of float): Spectral displacement, velocity and acceleration, respectively.
+        &#34;&#34;&#34;
+        self.T = T
+        self.Sd = Sd
+        self.Sv = Sv
+        self.Sa = Sa
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def plot(self, log=False, **kwargs):
+        &#34;&#34;&#34;
+        Method plots Response Spectrum of ResponseSpectrum object
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
+        ax[0].plot(self.T, self.Sd, color=&#34;black&#34;, linewidth=0.5)
+        ax[1].plot(self.T, self.Sv, color=&#34;black&#34;, linewidth=0.5)
+        ax[2].plot(self.T, self.Sa, color=&#34;black&#34;, linewidth=0.5)
+        ax[0].set_xlabel(&#34;Period (s)&#34;)
+        ax[1].set_xlabel(&#34;Period (s)&#34;)
+        ax[2].set_xlabel(&#34;Period (s)&#34;)
+        ax[0].set_ylabel(&#34;Spectral displacement&#34;)
+        ax[1].set_ylabel(&#34;Spectral velocity&#34;)
+        ax[2].set_ylabel(&#34;Spectral acceleration&#34;)
+        if log:
+            ax[0].set_xscale(&#34;log&#34;)
+            ax[0].set_yscale(&#34;log&#34;)
+            ax[1].set_xscale(&#34;log&#34;)
+            ax[1].set_yscale(&#34;log&#34;)
+            ax[2].set_xscale(&#34;log&#34;)
+            ax[2].set_yscale(&#34;log&#34;)
+        # plt.show()
+        return fig</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="earthquakepy.timeseries.ResponseSpectrum.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self, log=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Method plots Response Spectrum of ResponseSpectrum object
+Parameters</p>
+<hr>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Matplotlib Figure Object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot(self, log=False, **kwargs):
+    &#34;&#34;&#34;
+    Method plots Response Spectrum of ResponseSpectrum object
+    Parameters
+    ----------
+    Returns
+    -------
+    Matplotlib Figure Object
+
+    &#34;&#34;&#34;
+    fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
+    ax[0].plot(self.T, self.Sd, color=&#34;black&#34;, linewidth=0.5)
+    ax[1].plot(self.T, self.Sv, color=&#34;black&#34;, linewidth=0.5)
+    ax[2].plot(self.T, self.Sa, color=&#34;black&#34;, linewidth=0.5)
+    ax[0].set_xlabel(&#34;Period (s)&#34;)
+    ax[1].set_xlabel(&#34;Period (s)&#34;)
+    ax[2].set_xlabel(&#34;Period (s)&#34;)
+    ax[0].set_ylabel(&#34;Spectral displacement&#34;)
+    ax[1].set_ylabel(&#34;Spectral velocity&#34;)
+    ax[2].set_ylabel(&#34;Spectral acceleration&#34;)
+    if log:
+        ax[0].set_xscale(&#34;log&#34;)
+        ax[0].set_yscale(&#34;log&#34;)
+        ax[1].set_xscale(&#34;log&#34;)
+        ax[1].set_yscale(&#34;log&#34;)
+        ax[2].set_xscale(&#34;log&#34;)
+        ax[2].set_yscale(&#34;log&#34;)
+    # plt.show()
+    return fig</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries"><code class="flex name class">
+<span>class <span class="ident">TimeSeries</span></span>
+<span>(</span><span>t, y)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>TimeSeries object class
+Defines time series</p>
+<p>Time series object initiation with
+t and y as lists or 1D arrays.
+If t is a scalar, then the array is
+autogenerated with scalar value as dt.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TimeSeries:
+    &#34;&#34;&#34;
+    TimeSeries object class
+    Defines time series
+    &#34;&#34;&#34;
+
+    def __init__(self, t, y):
+        &#34;&#34;&#34;
+        Time series object initiation with
+        t and y as lists or 1D arrays.
+        If t is a scalar, then the array is
+        autogenerated with scalar value as dt.
+        &#34;&#34;&#34;
+        if (type(t) == float) or (type(t) == int):
+            t = np.arange(0.0, len(y) * t - 0.1 * t, t)
+        self.t = t
+        self.y = y
+        self.npts = len(t)
+        self.dt = t[1] - t[0]
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def set_tunit(self, unit):
+        &#34;&#34;&#34;
+        Set unit for T(time) coordinates.
+        Unit should be a string.
+        &#34;&#34;&#34;
+        self.tunit = unit
+
+    def set_yunit(self, unit):
+        &#34;&#34;&#34;
+        Set unit for y coordinates.
+        Unit should be a string.
+        &#34;&#34;&#34;
+        self.yunit = unit
+
+    def set_t(self, coords):
+        &#34;&#34;&#34;
+        Set T(time) coordinates.
+        Should be a list or numpy array (1D)
+        &#34;&#34;&#34;
+        self.t = coords
+
+    def set_eqname(self, name):
+        &#34;&#34;&#34;Set earthquake name&#34;&#34;&#34;
+        self.eqName = name
+
+    def set_eqdate(self, date):
+        &#34;&#34;&#34;Set earthquake date&#34;&#34;&#34;
+        self.eqDate = date
+
+    def set_station(self, station):
+        &#34;&#34;&#34;Recording station&#34;&#34;&#34;
+        self.station = station
+
+    def set_component(self, comp):
+        &#34;&#34;&#34;Directional component of record&#34;&#34;&#34;
+        self.component = comp
+
+    def set_dt(self, dt):
+        &#34;&#34;&#34;Time step between data points&#34;&#34;&#34;
+        self.dt = dt
+
+    def set_npts(self, npts):
+        &#34;&#34;&#34;Total number of points in the record&#34;&#34;&#34;
+        self.npts = npts
+
+    def set_time(self, time):
+        &#34;&#34;&#34;Total duration of the record in seconds&#34;&#34;&#34;
+        self.time = time
+
+    def set_filepath(self, filepath):
+        &#34;&#34;&#34;Record filepath&#34;&#34;&#34;
+        self.filepath = filepath
+
+    def plot(self, log=False, **kwargs):
+        &#34;&#34;&#34;
+        Method plots time history of timeseries object.
+        It accepts all the arguments that matplotlib.pyplot.subplots recognizes.
+        Parameters
+        ----------
+        Returns
+        -------
+        Matplotlib Figure Object
+
+        &#34;&#34;&#34;
+        fig, ax = plt.subplots(**kwargs)
+        ax.plot(self.t, self.y, color=&#34;black&#34;, linewidth=0.5)
+        if hasattr(self, &#34;tunit&#34;):
+            ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
+        if hasattr(self, &#34;yunit&#34;):
+            ax.set_ylabel(str(self.yunit))
+        if log:
+            ax.set_xscale(&#34;log&#34;)
+        # plt.show()
+        return fig
+
+    def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
+        &#34;&#34;&#34;
+        Calculates linear elastic response spectra associated with the timeseries.
+        Inputs:
+        Tstart and Tend (floats): Periods corresponding to spectrum width
+        dT (float): Step size for period
+        xi (float): damping ratio
+
+        Retuens:
+        ResponseSpectrum object with T, Sd, Sv, Sa as attributes.
+        Where T: Period
+        Sd, Sv, Sa: Spectral displacement, velocity and acceleration, respectively.
+        &#34;&#34;&#34;
+        specLength = len(T)
+        Sd = np.empty(specLength)
+        Sv = np.empty(specLength)
+        Sa = np.empty(specLength)
+        for i in range(specLength):
+            s = Sdof(T=T[i], xi=xi)
+            r = s.get_response(self, tsType=&#34;baseExcitation&#34;)
+            D = np.max(np.abs(r.y[0]))
+            V = np.max(np.abs(r.y[1]))
+            A = np.max(np.abs(r.acc))
+            Sd[i] = D
+            Sv[i] = V
+            Sa[i] = A
+        return ResponseSpectrum(T, Sd, Sv, Sa)
+
+    def get_fourier_spectrum(self):
+        &#34;&#34;&#34;
+        Computes fourier spectrum associated with the time series
+        &#34;&#34;&#34;
+        N = self.npts
+        T = self.dt  # sampling interval
+        yf = fft(self.y)
+        # FAmp = np.abs(yf[0:N//2])
+        freq = fftfreq(N, T)  # [:N//2]
+        return FourierSpectrum(freq, yf, N)
+
+    def get_power_spectrum(self):
+        &#34;&#34;&#34;
+        Computes power spectrum associated with the time series
+        &#34;&#34;&#34;
+        N = self.npts
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        df = freq[1] - freq[0]
+        powerAmp = 2.0 / df * fourier_spectrum.amplitude**2
+        return PowerSpectrum(freq, powerAmp, N)
+
+    def get_mean_period(self):
+        &#34;&#34;&#34;
+        Computes the simplified frequency content characterisation parameter according to  Rathje et al. [1998]
+        Returns
+        -------
+        Scalar:
+            Mean period
+
+        &#34;&#34;&#34;
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        FAmp = fourier_spectrum.amplitude
+        boolArr = (freq &gt; 0.25) &amp; (freq &lt; 20)
+        n = FAmp[boolArr] ** 2 / freq[boolArr]
+        n = n.sum()
+        d = FAmp[boolArr] ** 2
+        d = d.sum()
+        return n / d
+
+    def get_mean_frequency(self):
+        &#34;&#34;&#34;
+        Computes the simplified frequency content characterisation parameter according to  Schnabel [1973]
+        Returns
+        -------
+        Scalar:
+            Mean square frequency
+
+        &#34;&#34;&#34;
+        fourier_spectrum = self.get_fourier_spectrum()
+        freq = fourier_spectrum.frequencies
+        FAmp = fourier_spectrum.amplitude
+        boolArr = (freq &gt; 0.25) &amp; (freq &lt; 20)
+        n = FAmp[boolArr] ** 2 * freq[boolArr]
+        n = n.sum()
+        d = FAmp[boolArr] ** 2
+        d = d.sum()
+        return n / d
+
+    def get_epsilon(self):
+        &#34;&#34;&#34;
+        Computes the dimensionless frequency indicator, epsilon as given by Clough and Penzien
+        Returns
+        -------
+        Scalar
+
+        &#34;&#34;&#34;
+        from scipy.integrate import trapz
+
+        power_spectrum = self.get_power_spectrum()
+        freq = power_spectrum.frequencies
+        powerAmp = power_spectrum.amplitude
+        m0 = trapz(powerAmp, freq)
+        m2 = trapz(powerAmp * freq**2, freq)
+        m4 = trapz(powerAmp * freq**4, freq)
+        eps = np.sqrt(1 - m2**2 / (m0 * m4))
+        return eps
+
+    def get_arias_intensity(self, g=False):
+        &#34;&#34;&#34;
+        Computes arias intensity:
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+        Returns
+        -------
+        array like:
+            Arias intensity time series
+
+        &#34;&#34;&#34;
+        acc = self.y
+        dt = self.dt
+        if g:
+            acc = acc * 9.81
+
+        iaSeries = np.pi / (2 * 9.81) * cumtrapz(acc**2, dx=dt, initial=0)
+        return iaSeries
+
+    def get_total_arias(self, g=False):
+        &#34;&#34;&#34;
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Total Arias Intensity
+
+        &#34;&#34;&#34;
+        acc = self.y
+        dt = self.dt
+        if g:
+            acc = acc * 9.81
+
+        ia = np.pi / (2 * 9.81) * trapz(acc**2, dx=dt)
+        return ia
+
+    def get_sig_duration(self, g=False, start=0.05, stop=0.95):
+        &#34;&#34;&#34;
+
+        Computes significant duration as portion of ground motion encompassing 5% to 95% of total arias intensity
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        start: float, optional
+            defines the start point in fraction of total arias intensity from where significant duration starts.
+
+        stop: float, optional
+            defines the end point in fraction of total arias intensity where significant duration ends.
+
+        Returns
+        -------
+        Scalar:
+            Significant Duration (5-95)%
+
+        &#34;&#34;&#34;
+        dt = self.dt
+        cumIa = self.get_arias_intensity(g=g)
+        index = np.where((cumIa &gt; start * cumIa[-1]) &amp; (cumIa &lt; stop * cumIa[-1]))
+        return index[0][-1] * dt - index[0][0] * dt
+
+    def get_destructive_potential(self, g=False):
+        &#34;&#34;&#34;
+        Computes destructiveness potential according to Araya and Sargoni (1984)
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Destructiveness potential
+
+        &#34;&#34;&#34;
+        acc = self.y
+        ia = self.get_total_arias(g=g)
+        u0 = len(np.where(np.diff(np.sign(acc)))[0])
+        return ia / u0**2
+
+    def get_cum_abs_vel(self, g=False):
+        &#34;&#34;&#34;
+        Computes cummulative absolute velocity
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Cummulative Absolute Velocity
+
+        &#34;&#34;&#34;
+        acc = self.y
+        dt = self.dt
+        if g:
+            acc = acc * 9.81
+        acc = np.absolute(acc)
+        return trapz(acc, dx=dt)
+
+    def get_cum_abs_disp(self):
+        &#34;&#34;&#34;
+        Computes Cummulative Absolute Displacement
+
+        Note
+            Please make sure to use velocity time series as input to compute cummulative absolute displacement.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Scalar:
+            Cummulative Absolute Velocity
+
+        &#34;&#34;&#34;
+        vel = self.y
+        dt = self.dt
+        vel = np.absolute(vel)
+        return trapz(vel, dx=dt)
+
+    def get_specific_energy(self):
+        &#34;&#34;&#34;
+
+        Computes specific energy density
+
+        Note
+            Please use velocity time series as input to compute specific energy density.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        Scalar:
+            Specify Energy Density
+
+        &#34;&#34;&#34;
+        vel = self.y
+        dt = self.dt
+        return trapz(vel**2, dx=dt)
+
+    def get_rms(self, g=False):
+        &#34;&#34;&#34;
+
+        Root-mean-square value of acceleration/velocity/displacement time series
+
+        Parameters
+        ----------
+        g: Bool, optional
+            g=True multiplies acceleration values with g=9.81 m/sec^2.
+            Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+        Returns
+        -------
+        Scalar:
+            Root-mean-square value of time series values
+
+
+        &#34;&#34;&#34;
+        val = self.y
+        total_time = self.time
+        dt = self.dt
+        return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="earthquakepy.timeseries.TimeSeries.get_arias_intensity"><code class="name flex">
+<span>def <span class="ident">get_arias_intensity</span></span>(<span>self, g=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes arias intensity:</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>g</code></strong> :&ensp;<code>Bool</code>, optional</dt>
+<dd>g=True multiplies acceleration values with g=9.81 m/sec^2.
+Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>array like:</code></dt>
+<dd>Arias intensity time series</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_arias_intensity(self, g=False):
+    &#34;&#34;&#34;
+    Computes arias intensity:
+
+    Parameters
+    ----------
+    g: Bool, optional
+        g=True multiplies acceleration values with g=9.81 m/sec^2.
+        Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+    Returns
+    -------
+    array like:
+        Arias intensity time series
+
+    &#34;&#34;&#34;
+    acc = self.y
+    dt = self.dt
+    if g:
+        acc = acc * 9.81
+
+    iaSeries = np.pi / (2 * 9.81) * cumtrapz(acc**2, dx=dt, initial=0)
+    return iaSeries</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_cum_abs_disp"><code class="name flex">
+<span>def <span class="ident">get_cum_abs_disp</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes Cummulative Absolute Displacement</p>
+<p>Note
+Please make sure to use velocity time series as input to compute cummulative absolute displacement.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>None</code></strong></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<h2 id="scalar">Scalar</h2>
+<p>Cummulative Absolute Velocity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cum_abs_disp(self):
+    &#34;&#34;&#34;
+    Computes Cummulative Absolute Displacement
+
+    Note
+        Please make sure to use velocity time series as input to compute cummulative absolute displacement.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Scalar:
+        Cummulative Absolute Velocity
+
+    &#34;&#34;&#34;
+    vel = self.y
+    dt = self.dt
+    vel = np.absolute(vel)
+    return trapz(vel, dx=dt)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_cum_abs_vel"><code class="name flex">
+<span>def <span class="ident">get_cum_abs_vel</span></span>(<span>self, g=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes cummulative absolute velocity</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>g</code></strong> :&ensp;<code>Bool</code>, optional</dt>
+<dd>g=True multiplies acceleration values with g=9.81 m/sec^2.
+Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<h2 id="scalar">Scalar</h2>
+<p>Cummulative Absolute Velocity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cum_abs_vel(self, g=False):
+    &#34;&#34;&#34;
+    Computes cummulative absolute velocity
+
+    Parameters
+    ----------
+    g: Bool, optional
+        g=True multiplies acceleration values with g=9.81 m/sec^2.
+        Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+    Returns
+    -------
+    Scalar:
+        Cummulative Absolute Velocity
+
+    &#34;&#34;&#34;
+    acc = self.y
+    dt = self.dt
+    if g:
+        acc = acc * 9.81
+    acc = np.absolute(acc)
+    return trapz(acc, dx=dt)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_destructive_potential"><code class="name flex">
+<span>def <span class="ident">get_destructive_potential</span></span>(<span>self, g=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes destructiveness potential according to Araya and Sargoni (1984)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>g</code></strong> :&ensp;<code>Bool</code>, optional</dt>
+<dd>g=True multiplies acceleration values with g=9.81 m/sec^2.
+Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<h2 id="scalar">Scalar</h2>
+<p>Destructiveness potential</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_destructive_potential(self, g=False):
+    &#34;&#34;&#34;
+    Computes destructiveness potential according to Araya and Sargoni (1984)
+
+    Parameters
+    ----------
+    g: Bool, optional
+        g=True multiplies acceleration values with g=9.81 m/sec^2.
+        Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+    Returns
+    -------
+    Scalar:
+        Destructiveness potential
+
+    &#34;&#34;&#34;
+    acc = self.y
+    ia = self.get_total_arias(g=g)
+    u0 = len(np.where(np.diff(np.sign(acc)))[0])
+    return ia / u0**2</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_epsilon"><code class="name flex">
+<span>def <span class="ident">get_epsilon</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the dimensionless frequency indicator, epsilon as given by Clough and Penzien
+Returns</p>
+<hr>
+<dl>
+<dt><code>Scalar</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_epsilon(self):
+    &#34;&#34;&#34;
+    Computes the dimensionless frequency indicator, epsilon as given by Clough and Penzien
+    Returns
+    -------
+    Scalar
+
+    &#34;&#34;&#34;
+    from scipy.integrate import trapz
+
+    power_spectrum = self.get_power_spectrum()
+    freq = power_spectrum.frequencies
+    powerAmp = power_spectrum.amplitude
+    m0 = trapz(powerAmp, freq)
+    m2 = trapz(powerAmp * freq**2, freq)
+    m4 = trapz(powerAmp * freq**4, freq)
+    eps = np.sqrt(1 - m2**2 / (m0 * m4))
+    return eps</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_fourier_spectrum"><code class="name flex">
+<span>def <span class="ident">get_fourier_spectrum</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes fourier spectrum associated with the time series</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_fourier_spectrum(self):
+    &#34;&#34;&#34;
+    Computes fourier spectrum associated with the time series
+    &#34;&#34;&#34;
+    N = self.npts
+    T = self.dt  # sampling interval
+    yf = fft(self.y)
+    # FAmp = np.abs(yf[0:N//2])
+    freq = fftfreq(N, T)  # [:N//2]
+    return FourierSpectrum(freq, yf, N)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_mean_frequency"><code class="name flex">
+<span>def <span class="ident">get_mean_frequency</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the simplified frequency content characterisation parameter according to
+Schnabel [1973]
+Returns</p>
+<hr>
+<h2 id="scalar">Scalar</h2>
+<p>Mean square frequency</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mean_frequency(self):
+    &#34;&#34;&#34;
+    Computes the simplified frequency content characterisation parameter according to  Schnabel [1973]
+    Returns
+    -------
+    Scalar:
+        Mean square frequency
+
+    &#34;&#34;&#34;
+    fourier_spectrum = self.get_fourier_spectrum()
+    freq = fourier_spectrum.frequencies
+    FAmp = fourier_spectrum.amplitude
+    boolArr = (freq &gt; 0.25) &amp; (freq &lt; 20)
+    n = FAmp[boolArr] ** 2 * freq[boolArr]
+    n = n.sum()
+    d = FAmp[boolArr] ** 2
+    d = d.sum()
+    return n / d</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_mean_period"><code class="name flex">
+<span>def <span class="ident">get_mean_period</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the simplified frequency content characterisation parameter according to
+Rathje et al. [1998]
+Returns</p>
+<hr>
+<h2 id="scalar">Scalar</h2>
+<p>Mean period</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mean_period(self):
+    &#34;&#34;&#34;
+    Computes the simplified frequency content characterisation parameter according to  Rathje et al. [1998]
+    Returns
+    -------
+    Scalar:
+        Mean period
+
+    &#34;&#34;&#34;
+    fourier_spectrum = self.get_fourier_spectrum()
+    freq = fourier_spectrum.frequencies
+    FAmp = fourier_spectrum.amplitude
+    boolArr = (freq &gt; 0.25) &amp; (freq &lt; 20)
+    n = FAmp[boolArr] ** 2 / freq[boolArr]
+    n = n.sum()
+    d = FAmp[boolArr] ** 2
+    d = d.sum()
+    return n / d</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_power_spectrum"><code class="name flex">
+<span>def <span class="ident">get_power_spectrum</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes power spectrum associated with the time series</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_power_spectrum(self):
+    &#34;&#34;&#34;
+    Computes power spectrum associated with the time series
+    &#34;&#34;&#34;
+    N = self.npts
+    fourier_spectrum = self.get_fourier_spectrum()
+    freq = fourier_spectrum.frequencies
+    df = freq[1] - freq[0]
+    powerAmp = 2.0 / df * fourier_spectrum.amplitude**2
+    return PowerSpectrum(freq, powerAmp, N)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_response_spectra"><code class="name flex">
+<span>def <span class="ident">get_response_spectra</span></span>(<span>self, T=array([ 0.1,
+1.1,
+2.1,
+3.1,
+4.1,
+5.1,
+6.1,
+7.1,
+8.1,
+9.1, 10.1,
+11.1, 12.1, 13.1, 14.1, 15.1, 16.1, 17.1, 18.1, 19.1]), xi=0.05)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculates linear elastic response spectra associated with the timeseries.
+Inputs:
+Tstart and Tend (floats): Periods corresponding to spectrum width
+dT (float): Step size for period
+xi (float): damping ratio</p>
+<p>Retuens:
+ResponseSpectrum object with T, Sd, Sv, Sa as attributes.
+Where T: Period
+Sd, Sv, Sa: Spectral displacement, velocity and acceleration, respectively.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
+    &#34;&#34;&#34;
+    Calculates linear elastic response spectra associated with the timeseries.
+    Inputs:
+    Tstart and Tend (floats): Periods corresponding to spectrum width
+    dT (float): Step size for period
+    xi (float): damping ratio
+
+    Retuens:
+    ResponseSpectrum object with T, Sd, Sv, Sa as attributes.
+    Where T: Period
+    Sd, Sv, Sa: Spectral displacement, velocity and acceleration, respectively.
+    &#34;&#34;&#34;
+    specLength = len(T)
+    Sd = np.empty(specLength)
+    Sv = np.empty(specLength)
+    Sa = np.empty(specLength)
+    for i in range(specLength):
+        s = Sdof(T=T[i], xi=xi)
+        r = s.get_response(self, tsType=&#34;baseExcitation&#34;)
+        D = np.max(np.abs(r.y[0]))
+        V = np.max(np.abs(r.y[1]))
+        A = np.max(np.abs(r.acc))
+        Sd[i] = D
+        Sv[i] = V
+        Sa[i] = A
+    return ResponseSpectrum(T, Sd, Sv, Sa)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_rms"><code class="name flex">
+<span>def <span class="ident">get_rms</span></span>(<span>self, g=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Root-mean-square value of acceleration/velocity/displacement time series</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>g</code></strong> :&ensp;<code>Bool</code>, optional</dt>
+<dd>g=True multiplies acceleration values with g=9.81 m/sec^2.
+Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<h2 id="scalar">Scalar</h2>
+<p>Root-mean-square value of time series values</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_rms(self, g=False):
+    &#34;&#34;&#34;
+
+    Root-mean-square value of acceleration/velocity/displacement time series
+
+    Parameters
+    ----------
+    g: Bool, optional
+        g=True multiplies acceleration values with g=9.81 m/sec^2.
+        Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+    Returns
+    -------
+    Scalar:
+        Root-mean-square value of time series values
+
+
+    &#34;&#34;&#34;
+    val = self.y
+    total_time = self.time
+    dt = self.dt
+    return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_sig_duration"><code class="name flex">
+<span>def <span class="ident">get_sig_duration</span></span>(<span>self, g=False, start=0.05, stop=0.95)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes significant duration as portion of ground motion encompassing 5% to 95% of total arias intensity</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>g</code></strong> :&ensp;<code>Bool</code>, optional</dt>
+<dd>g=True multiplies acceleration values with g=9.81 m/sec^2.
+Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</dd>
+<dt><strong><code>start</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>defines the start point in fraction of total arias intensity from where significant duration starts.</dd>
+<dt><strong><code>stop</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>defines the end point in fraction of total arias intensity where significant duration ends.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<h2 id="scalar">Scalar</h2>
+<p>Significant Duration (5-95)%</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_sig_duration(self, g=False, start=0.05, stop=0.95):
+    &#34;&#34;&#34;
+
+    Computes significant duration as portion of ground motion encompassing 5% to 95% of total arias intensity
+
+    Parameters
+    ----------
+    g: Bool, optional
+        g=True multiplies acceleration values with g=9.81 m/sec^2.
+        Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+    start: float, optional
+        defines the start point in fraction of total arias intensity from where significant duration starts.
+
+    stop: float, optional
+        defines the end point in fraction of total arias intensity where significant duration ends.
+
+    Returns
+    -------
+    Scalar:
+        Significant Duration (5-95)%
+
+    &#34;&#34;&#34;
+    dt = self.dt
+    cumIa = self.get_arias_intensity(g=g)
+    index = np.where((cumIa &gt; start * cumIa[-1]) &amp; (cumIa &lt; stop * cumIa[-1]))
+    return index[0][-1] * dt - index[0][0] * dt</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_specific_energy"><code class="name flex">
+<span>def <span class="ident">get_specific_energy</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes specific energy density</p>
+<p>Note
+Please use velocity time series as input to compute specific energy density.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>None</code></strong></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<h2 id="scalar">Scalar</h2>
+<p>Specify Energy Density</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_specific_energy(self):
+    &#34;&#34;&#34;
+
+    Computes specific energy density
+
+    Note
+        Please use velocity time series as input to compute specific energy density.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Scalar:
+        Specify Energy Density
+
+    &#34;&#34;&#34;
+    vel = self.y
+    dt = self.dt
+    return trapz(vel**2, dx=dt)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_total_arias"><code class="name flex">
+<span>def <span class="ident">get_total_arias</span></span>(<span>self, g=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>g</code></strong> :&ensp;<code>Bool</code>, optional</dt>
+<dd>g=True multiplies acceleration values with g=9.81 m/sec^2.
+Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<h2 id="scalar">Scalar</h2>
+<p>Total Arias Intensity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_total_arias(self, g=False):
+    &#34;&#34;&#34;
+
+    Parameters
+    ----------
+    g: Bool, optional
+        g=True multiplies acceleration values with g=9.81 m/sec^2.
+        Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
+
+    Returns
+    -------
+    Scalar:
+        Total Arias Intensity
+
+    &#34;&#34;&#34;
+    acc = self.y
+    dt = self.dt
+    if g:
+        acc = acc * 9.81
+
+    ia = np.pi / (2 * 9.81) * trapz(acc**2, dx=dt)
+    return ia</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self, log=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Method plots time history of timeseries object.
+It accepts all the arguments that matplotlib.pyplot.subplots recognizes.
+Parameters</p>
+<hr>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Matplotlib Figure Object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot(self, log=False, **kwargs):
+    &#34;&#34;&#34;
+    Method plots time history of timeseries object.
+    It accepts all the arguments that matplotlib.pyplot.subplots recognizes.
+    Parameters
+    ----------
+    Returns
+    -------
+    Matplotlib Figure Object
+
+    &#34;&#34;&#34;
+    fig, ax = plt.subplots(**kwargs)
+    ax.plot(self.t, self.y, color=&#34;black&#34;, linewidth=0.5)
+    if hasattr(self, &#34;tunit&#34;):
+        ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
+    if hasattr(self, &#34;yunit&#34;):
+        ax.set_ylabel(str(self.yunit))
+    if log:
+        ax.set_xscale(&#34;log&#34;)
+    # plt.show()
+    return fig</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_component"><code class="name flex">
+<span>def <span class="ident">set_component</span></span>(<span>self, comp)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Directional component of record</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_component(self, comp):
+    &#34;&#34;&#34;Directional component of record&#34;&#34;&#34;
+    self.component = comp</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_dt"><code class="name flex">
+<span>def <span class="ident">set_dt</span></span>(<span>self, dt)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Time step between data points</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_dt(self, dt):
+    &#34;&#34;&#34;Time step between data points&#34;&#34;&#34;
+    self.dt = dt</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_eqdate"><code class="name flex">
+<span>def <span class="ident">set_eqdate</span></span>(<span>self, date)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set earthquake date</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_eqdate(self, date):
+    &#34;&#34;&#34;Set earthquake date&#34;&#34;&#34;
+    self.eqDate = date</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_eqname"><code class="name flex">
+<span>def <span class="ident">set_eqname</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set earthquake name</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_eqname(self, name):
+    &#34;&#34;&#34;Set earthquake name&#34;&#34;&#34;
+    self.eqName = name</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_filepath"><code class="name flex">
+<span>def <span class="ident">set_filepath</span></span>(<span>self, filepath)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Record filepath</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_filepath(self, filepath):
+    &#34;&#34;&#34;Record filepath&#34;&#34;&#34;
+    self.filepath = filepath</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_npts"><code class="name flex">
+<span>def <span class="ident">set_npts</span></span>(<span>self, npts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Total number of points in the record</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_npts(self, npts):
+    &#34;&#34;&#34;Total number of points in the record&#34;&#34;&#34;
+    self.npts = npts</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_station"><code class="name flex">
+<span>def <span class="ident">set_station</span></span>(<span>self, station)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Recording station</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_station(self, station):
+    &#34;&#34;&#34;Recording station&#34;&#34;&#34;
+    self.station = station</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_t"><code class="name flex">
+<span>def <span class="ident">set_t</span></span>(<span>self, coords)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set T(time) coordinates.
+Should be a list or numpy array (1D)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_t(self, coords):
+    &#34;&#34;&#34;
+    Set T(time) coordinates.
+    Should be a list or numpy array (1D)
+    &#34;&#34;&#34;
+    self.t = coords</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_time"><code class="name flex">
+<span>def <span class="ident">set_time</span></span>(<span>self, time)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Total duration of the record in seconds</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_time(self, time):
+    &#34;&#34;&#34;Total duration of the record in seconds&#34;&#34;&#34;
+    self.time = time</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_tunit"><code class="name flex">
+<span>def <span class="ident">set_tunit</span></span>(<span>self, unit)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set unit for T(time) coordinates.
+Unit should be a string.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_tunit(self, unit):
+    &#34;&#34;&#34;
+    Set unit for T(time) coordinates.
+    Unit should be a string.
+    &#34;&#34;&#34;
+    self.tunit = unit</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_yunit"><code class="name flex">
+<span>def <span class="ident">set_yunit</span></span>(<span>self, unit)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set unit for y coordinates.
+Unit should be a string.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_yunit(self, unit):
+    &#34;&#34;&#34;
+    Set unit for y coordinates.
+    Unit should be a string.
+    &#34;&#34;&#34;
+    self.yunit = unit</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="earthquakepy" href="index.html">earthquakepy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="earthquakepy.timeseries.FourierSpectrum" href="#earthquakepy.timeseries.FourierSpectrum">FourierSpectrum</a></code></h4>
+<ul class="">
+<li><code><a title="earthquakepy.timeseries.FourierSpectrum.plot" href="#earthquakepy.timeseries.FourierSpectrum.plot">plot</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="earthquakepy.timeseries.PowerSpectrum" href="#earthquakepy.timeseries.PowerSpectrum">PowerSpectrum</a></code></h4>
+<ul class="">
+<li><code><a title="earthquakepy.timeseries.PowerSpectrum.get_compatible_timehistories" href="#earthquakepy.timeseries.PowerSpectrum.get_compatible_timehistories">get_compatible_timehistories</a></code></li>
+<li><code><a title="earthquakepy.timeseries.PowerSpectrum.plot" href="#earthquakepy.timeseries.PowerSpectrum.plot">plot</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="earthquakepy.timeseries.ResponseSpectrum" href="#earthquakepy.timeseries.ResponseSpectrum">ResponseSpectrum</a></code></h4>
+<ul class="">
+<li><code><a title="earthquakepy.timeseries.ResponseSpectrum.plot" href="#earthquakepy.timeseries.ResponseSpectrum.plot">plot</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="earthquakepy.timeseries.TimeSeries" href="#earthquakepy.timeseries.TimeSeries">TimeSeries</a></code></h4>
+<ul class="">
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_arias_intensity" href="#earthquakepy.timeseries.TimeSeries.get_arias_intensity">get_arias_intensity</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_cum_abs_disp" href="#earthquakepy.timeseries.TimeSeries.get_cum_abs_disp">get_cum_abs_disp</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_cum_abs_vel" href="#earthquakepy.timeseries.TimeSeries.get_cum_abs_vel">get_cum_abs_vel</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_destructive_potential" href="#earthquakepy.timeseries.TimeSeries.get_destructive_potential">get_destructive_potential</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_epsilon" href="#earthquakepy.timeseries.TimeSeries.get_epsilon">get_epsilon</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_fourier_spectrum" href="#earthquakepy.timeseries.TimeSeries.get_fourier_spectrum">get_fourier_spectrum</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_mean_frequency" href="#earthquakepy.timeseries.TimeSeries.get_mean_frequency">get_mean_frequency</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_mean_period" href="#earthquakepy.timeseries.TimeSeries.get_mean_period">get_mean_period</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_power_spectrum" href="#earthquakepy.timeseries.TimeSeries.get_power_spectrum">get_power_spectrum</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_response_spectra" href="#earthquakepy.timeseries.TimeSeries.get_response_spectra">get_response_spectra</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_rms" href="#earthquakepy.timeseries.TimeSeries.get_rms">get_rms</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_sig_duration" href="#earthquakepy.timeseries.TimeSeries.get_sig_duration">get_sig_duration</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_specific_energy" href="#earthquakepy.timeseries.TimeSeries.get_specific_energy">get_specific_energy</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_total_arias" href="#earthquakepy.timeseries.TimeSeries.get_total_arias">get_total_arias</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.plot" href="#earthquakepy.timeseries.TimeSeries.plot">plot</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_component" href="#earthquakepy.timeseries.TimeSeries.set_component">set_component</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_dt" href="#earthquakepy.timeseries.TimeSeries.set_dt">set_dt</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_eqdate" href="#earthquakepy.timeseries.TimeSeries.set_eqdate">set_eqdate</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_eqname" href="#earthquakepy.timeseries.TimeSeries.set_eqname">set_eqname</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_filepath" href="#earthquakepy.timeseries.TimeSeries.set_filepath">set_filepath</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_npts" href="#earthquakepy.timeseries.TimeSeries.set_npts">set_npts</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_station" href="#earthquakepy.timeseries.TimeSeries.set_station">set_station</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_t" href="#earthquakepy.timeseries.TimeSeries.set_t">set_t</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_time" href="#earthquakepy.timeseries.TimeSeries.set_time">set_time</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_tunit" href="#earthquakepy.timeseries.TimeSeries.set_tunit">set_tunit</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_yunit" href="#earthquakepy.timeseries.TimeSeries.set_yunit">set_yunit</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
