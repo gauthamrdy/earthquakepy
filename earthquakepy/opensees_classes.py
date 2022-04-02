@@ -6,20 +6,20 @@ class OpenSeesNodeOutput:
     def __init__(self, filename, ncomps, nodeTags=[], compNames=[], **kwargs):
         """
         Read opensees generated node output file.
-        Inputs:
-        filename (string): Node output filename.
-        ncomps (int): number of components per node.
-        nodeTags (list of int): Node tags, default=[1, 2, ...., N]. Note 
-        that default list starts from "1" for compatibility with opensees.
-        compnames (list of strings): Name to be given to each component. 
-        Default is ["0", "1", "2", "3", ...., "m"]
+
+        Parameters
+        ----------
+        filename: (string) Node output filename
+        ncomps: (int) number of components per node
+        nodeTags: (list of int) Node tags, default=[1, 2, ...., N]. Note that default list starts from "1" for compatibility with opensees
+        compnames: (list of strings) Name to be given to each component. Default is ["0", "1", "2", "3", ...., "m"]
         """
         with open(filename, "r") as f:
             data = np.genfromtxt(filename)
 
-        nNodes = int((np.shape(data)[1] - 1)/ncomps)
+        nNodes = int((np.shape(data)[1] - 1) / ncomps)
         if len(nodeTags) == 0:
-            nodeTags = [i+1 for i in range(nNodes)]
+            nodeTags = [i + 1 for i in range(nNodes)]
         elif len(nodeTags) != nNodes:
             raise Exception("Length of nodeTags and number of nodes must be same")
 
@@ -32,7 +32,7 @@ class OpenSeesNodeOutput:
         for i in nodeTags:
             dataDir[i] = {}
             for j in range(ncomps):
-                dataDir[i][compNames[j]] = d[i-1][:, j]
+                dataDir[i][compNames[j]] = d[i - 1][:, j]
 
         self.data = dataDir
         self.nodeTags = nodeTags
@@ -48,7 +48,8 @@ class OpenSeesNodeOutput:
 class OpenSeesModel:
     def __init__(self, jsonModelFile):
         """
-        Class for storing OpenSees Model details recorded in a JSON file using command "print -JSON -file jsonModelFile
+        Class for storing OpenSees Model details recorded in a JSON file using command
+        <mark>print -JSON -file jsonModelFile</mark>
         """
         self.jsonFile = jsonModelFile
 
@@ -79,6 +80,15 @@ class OpenSeesModel:
                 nodes = {**nodes, **{j["name"]: j["crd"]}}
             elif ("name" in line) and ("nodes" in line):
                 j = json.loads(line)
-                elements = {**elements, **{j["name"]: {"type": j["type"], "nodes": j["nodes"], "material": j["material"]}}}
+                elements = {
+                    **elements,
+                    **{
+                        j["name"]: {
+                            "type": j["type"],
+                            "nodes": j["nodes"],
+                            "material": j["material"],
+                        }
+                    },
+                }
         self.nodes = nodes
         self.elements = elements

@@ -5,10 +5,15 @@ from earthquakepy import timeseries
 
 def read_peer_nga_file(filepath):
     """
-    Reads PEER NGA record file and
-    generates a timeseries object.
-    Input :
+    Reads PEER NGA record file and generates a timeseries object.
+
+    Parameters
+    ----------
     filepath (string): PEER NGA file path
+
+    Returns
+    -------
+    TimeSeries object
     """
     with open(filepath, "r") as f:
         lines = f.readlines()
@@ -50,12 +55,15 @@ def read_peer_nga_file(filepath):
 
 def read_raw_file(filename, **kwargs):
     """
-    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates.
-    Input:
-        filename (str): filename of the file containing raw data
+    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
 
-    Output:
-        Timeseries object
+    Parameters
+    ----------
+    filename: (str) filename of the file containing raw data
+
+    Returns
+    -------
+    Timeseries object
     """
     data = np.genfromtxt(filename, **kwargs)
     ts = timeseries.TimeSeries(data[:, 0], data[:, 1])
