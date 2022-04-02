@@ -34,8 +34,16 @@ from .multidof import Mdof
 def mdof(**kwargs):
     &#34;&#34;&#34;
     Defines a MDOF system object.
-    Inputs:
-        M, C, K (2-D Arrays): Mass, damping and stiffness matrices
+
+    Parameters
+    ----------
+    M: (2-D array) Mass matrix
+    C: (2-D array) Damping matrix
+    K: (2-D array) Stiffness matrix
+
+    Returns
+    -------
+    Mdof object
     &#34;&#34;&#34;
     return Mdof(**kwargs)</code></pre>
 </details>
@@ -52,8 +60,20 @@ def mdof(**kwargs):
 </code></dt>
 <dd>
 <div class="desc"><p>Defines a MDOF system object.</p>
-<h2 id="inputs">Inputs</h2>
-<p>M, C, K (2-D Arrays): Mass, damping and stiffness matrices</p></div>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>M</code></strong> :&ensp;<code>(2-D array) Mass matrix</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>C</code></strong> :&ensp;<code>(2-D array) Damping matrix</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>K</code></strong> :&ensp;<code>(2-D array) Stiffness matrix</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Mdof object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -61,8 +81,16 @@ def mdof(**kwargs):
 <pre><code class="python">def mdof(**kwargs):
     &#34;&#34;&#34;
     Defines a MDOF system object.
-    Inputs:
-        M, C, K (2-D Arrays): Mass, damping and stiffness matrices
+
+    Parameters
+    ----------
+    M: (2-D array) Mass matrix
+    C: (2-D array) Damping matrix
+    K: (2-D array) Stiffness matrix
+
+    Returns
+    -------
+    Mdof object
     &#34;&#34;&#34;
     return Mdof(**kwargs)</code></pre>
 </details>

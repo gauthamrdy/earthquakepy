@@ -34,20 +34,20 @@ class OpenSeesNodeOutput:
     def __init__(self, filename, ncomps, nodeTags=[], compNames=[], **kwargs):
         &#34;&#34;&#34;
         Read opensees generated node output file.
-        Inputs:
-        filename (string): Node output filename.
-        ncomps (int): number of components per node.
-        nodeTags (list of int): Node tags, default=[1, 2, ...., N]. Note 
-        that default list starts from &#34;1&#34; for compatibility with opensees.
-        compnames (list of strings): Name to be given to each component. 
-        Default is [&#34;0&#34;, &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, ...., &#34;m&#34;]
+
+        Parameters
+        ----------
+        filename: (string) Node output filename
+        ncomps: (int) number of components per node
+        nodeTags: (list of int) Node tags, default=[1, 2, ...., N]. Note that default list starts from &#34;1&#34; for compatibility with opensees
+        compnames: (list of strings) Name to be given to each component. Default is [&#34;0&#34;, &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, ...., &#34;m&#34;]
         &#34;&#34;&#34;
         with open(filename, &#34;r&#34;) as f:
             data = np.genfromtxt(filename)
 
-        nNodes = int((np.shape(data)[1] - 1)/ncomps)
+        nNodes = int((np.shape(data)[1] - 1) / ncomps)
         if len(nodeTags) == 0:
-            nodeTags = [i+1 for i in range(nNodes)]
+            nodeTags = [i + 1 for i in range(nNodes)]
         elif len(nodeTags) != nNodes:
             raise Exception(&#34;Length of nodeTags and number of nodes must be same&#34;)
 
@@ -60,7 +60,7 @@ class OpenSeesNodeOutput:
         for i in nodeTags:
             dataDir[i] = {}
             for j in range(ncomps):
-                dataDir[i][compNames[j]] = d[i-1][:, j]
+                dataDir[i][compNames[j]] = d[i - 1][:, j]
 
         self.data = dataDir
         self.nodeTags = nodeTags
@@ -76,7 +76,8 @@ class OpenSeesNodeOutput:
 class OpenSeesModel:
     def __init__(self, jsonModelFile):
         &#34;&#34;&#34;
-        Class for storing OpenSees Model details recorded in a JSON file using command &#34;print -JSON -file jsonModelFile
+        Class for storing OpenSees Model details recorded in a JSON file using command
+        &lt;mark&gt;print -JSON -file jsonModelFile&lt;/mark&gt;
         &#34;&#34;&#34;
         self.jsonFile = jsonModelFile
 
@@ -107,7 +108,16 @@ class OpenSeesModel:
                 nodes = {**nodes, **{j[&#34;name&#34;]: j[&#34;crd&#34;]}}
             elif (&#34;name&#34; in line) and (&#34;nodes&#34; in line):
                 j = json.loads(line)
-                elements = {**elements, **{j[&#34;name&#34;]: {&#34;type&#34;: j[&#34;type&#34;], &#34;nodes&#34;: j[&#34;nodes&#34;], &#34;material&#34;: j[&#34;material&#34;]}}}
+                elements = {
+                    **elements,
+                    **{
+                        j[&#34;name&#34;]: {
+                            &#34;type&#34;: j[&#34;type&#34;],
+                            &#34;nodes&#34;: j[&#34;nodes&#34;],
+                            &#34;material&#34;: j[&#34;material&#34;],
+                        }
+                    },
+                }
         self.nodes = nodes
         self.elements = elements</code></pre>
 </details>
@@ -126,7 +136,8 @@ class OpenSeesModel:
 <span>(</span><span>jsonModelFile)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class for storing OpenSees Model details recorded in a JSON file using command "print -JSON -file jsonModelFile</p></div>
+<div class="desc"><p>Class for storing OpenSees Model details recorded in a JSON file using command
+<mark>print -JSON -file jsonModelFile</mark></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -134,7 +145,8 @@ class OpenSeesModel:
 <pre><code class="python">class OpenSeesModel:
     def __init__(self, jsonModelFile):
         &#34;&#34;&#34;
-        Class for storing OpenSees Model details recorded in a JSON file using command &#34;print -JSON -file jsonModelFile
+        Class for storing OpenSees Model details recorded in a JSON file using command
+        &lt;mark&gt;print -JSON -file jsonModelFile&lt;/mark&gt;
         &#34;&#34;&#34;
         self.jsonFile = jsonModelFile
 
@@ -165,7 +177,16 @@ class OpenSeesModel:
                 nodes = {**nodes, **{j[&#34;name&#34;]: j[&#34;crd&#34;]}}
             elif (&#34;name&#34; in line) and (&#34;nodes&#34; in line):
                 j = json.loads(line)
-                elements = {**elements, **{j[&#34;name&#34;]: {&#34;type&#34;: j[&#34;type&#34;], &#34;nodes&#34;: j[&#34;nodes&#34;], &#34;material&#34;: j[&#34;material&#34;]}}}
+                elements = {
+                    **elements,
+                    **{
+                        j[&#34;name&#34;]: {
+                            &#34;type&#34;: j[&#34;type&#34;],
+                            &#34;nodes&#34;: j[&#34;nodes&#34;],
+                            &#34;material&#34;: j[&#34;material&#34;],
+                        }
+                    },
+                }
         self.nodes = nodes
         self.elements = elements</code></pre>
 </details>
@@ -194,7 +215,16 @@ class OpenSeesModel:
             nodes = {**nodes, **{j[&#34;name&#34;]: j[&#34;crd&#34;]}}
         elif (&#34;name&#34; in line) and (&#34;nodes&#34; in line):
             j = json.loads(line)
-            elements = {**elements, **{j[&#34;name&#34;]: {&#34;type&#34;: j[&#34;type&#34;], &#34;nodes&#34;: j[&#34;nodes&#34;], &#34;material&#34;: j[&#34;material&#34;]}}}
+            elements = {
+                **elements,
+                **{
+                    j[&#34;name&#34;]: {
+                        &#34;type&#34;: j[&#34;type&#34;],
+                        &#34;nodes&#34;: j[&#34;nodes&#34;],
+                        &#34;material&#34;: j[&#34;material&#34;],
+                    }
+                },
+            }
     self.nodes = nodes
     self.elements = elements</code></pre>
 </details>
@@ -206,14 +236,18 @@ class OpenSeesModel:
 <span>(</span><span>filename, ncomps, nodeTags=[], compNames=[], **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Read opensees generated node output file.
-Inputs:
-filename (string): Node output filename.
-ncomps (int): number of components per node.
-nodeTags (list of int): Node tags, default=[1, 2, ...., N]. Note
-that default list starts from "1" for compatibility with opensees.
-compnames (list of strings): Name to be given to each component.
-Default is ["0", "1", "2", "3", ...., "m"]</p></div>
+<div class="desc"><p>Read opensees generated node output file.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>(string) Node output filename</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>ncomps</code></strong> :&ensp;<code>(int) number</code> of <code>components per node</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>nodeTags</code></strong> :&ensp;<code>(list</code> of <code>int) Node tags</code>, default=<code>[1, 2, ...., N]. Note that default list starts from "1" for compatibility with opensees</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>compnames</code></strong> :&ensp;<code>(list</code> of <code>strings) Name to be given to each component. Default is ["0", "1", "2", "3", ...., "m"]</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -222,20 +256,20 @@ Default is ["0", "1", "2", "3", ...., "m"]</p></div>
     def __init__(self, filename, ncomps, nodeTags=[], compNames=[], **kwargs):
         &#34;&#34;&#34;
         Read opensees generated node output file.
-        Inputs:
-        filename (string): Node output filename.
-        ncomps (int): number of components per node.
-        nodeTags (list of int): Node tags, default=[1, 2, ...., N]. Note 
-        that default list starts from &#34;1&#34; for compatibility with opensees.
-        compnames (list of strings): Name to be given to each component. 
-        Default is [&#34;0&#34;, &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, ...., &#34;m&#34;]
+
+        Parameters
+        ----------
+        filename: (string) Node output filename
+        ncomps: (int) number of components per node
+        nodeTags: (list of int) Node tags, default=[1, 2, ...., N]. Note that default list starts from &#34;1&#34; for compatibility with opensees
+        compnames: (list of strings) Name to be given to each component. Default is [&#34;0&#34;, &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, ...., &#34;m&#34;]
         &#34;&#34;&#34;
         with open(filename, &#34;r&#34;) as f:
             data = np.genfromtxt(filename)
 
-        nNodes = int((np.shape(data)[1] - 1)/ncomps)
+        nNodes = int((np.shape(data)[1] - 1) / ncomps)
         if len(nodeTags) == 0:
-            nodeTags = [i+1 for i in range(nNodes)]
+            nodeTags = [i + 1 for i in range(nNodes)]
         elif len(nodeTags) != nNodes:
             raise Exception(&#34;Length of nodeTags and number of nodes must be same&#34;)
 
@@ -248,7 +282,7 @@ Default is ["0", "1", "2", "3", ...., "m"]</p></div>
         for i in nodeTags:
             dataDir[i] = {}
             for j in range(ncomps):
-                dataDir[i][compNames[j]] = d[i-1][:, j]
+                dataDir[i][compNames[j]] = d[i - 1][:, j]
 
         self.data = dataDir
         self.nodeTags = nodeTags

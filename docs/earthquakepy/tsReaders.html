@@ -33,10 +33,15 @@ from earthquakepy import timeseries
 
 def read_peer_nga_file(filepath):
     &#34;&#34;&#34;
-    Reads PEER NGA record file and
-    generates a timeseries object.
-    Input :
+    Reads PEER NGA record file and generates a timeseries object.
+
+    Parameters
+    ----------
     filepath (string): PEER NGA file path
+
+    Returns
+    -------
+    TimeSeries object
     &#34;&#34;&#34;
     with open(filepath, &#34;r&#34;) as f:
         lines = f.readlines()
@@ -78,12 +83,15 @@ def read_peer_nga_file(filepath):
 
 def read_raw_file(filename, **kwargs):
     &#34;&#34;&#34;
-    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates.
-    Input:
-        filename (str): filename of the file containing raw data
+    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
 
-    Output:
-        Timeseries object
+    Parameters
+    ----------
+    filename: (str) filename of the file containing raw data
+
+    Returns
+    -------
+    Timeseries object
     &#34;&#34;&#34;
     data = np.genfromtxt(filename, **kwargs)
     ts = timeseries.TimeSeries(data[:, 0], data[:, 1])
@@ -101,20 +109,29 @@ def read_raw_file(filename, **kwargs):
 <span>def <span class="ident">read_peer_nga_file</span></span>(<span>filepath)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reads PEER NGA record file and
-generates a timeseries object.
-Input :
-filepath (string): PEER NGA file path</p></div>
+<div class="desc"><p>Reads PEER NGA record file and generates a timeseries object.</p>
+<h2 id="parameters">Parameters</h2>
+<p>filepath (string): PEER NGA file path</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>TimeSeries object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def read_peer_nga_file(filepath):
     &#34;&#34;&#34;
-    Reads PEER NGA record file and
-    generates a timeseries object.
-    Input :
+    Reads PEER NGA record file and generates a timeseries object.
+
+    Parameters
+    ----------
     filepath (string): PEER NGA file path
+
+    Returns
+    -------
+    TimeSeries object
     &#34;&#34;&#34;
     with open(filepath, &#34;r&#34;) as f:
         lines = f.readlines()
@@ -158,23 +175,32 @@ filepath (string): PEER NGA file path</p></div>
 <span>def <span class="ident">read_raw_file</span></span>(<span>filename, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates.</p>
-<h2 id="input">Input</h2>
-<p>filename (str): filename of the file containing raw data</p>
-<h2 id="output">Output</h2>
-<p>Timeseries object</p></div>
+<div class="desc"><p>Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>(str) filename</code> of <code>the file containing raw data</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Timeseries object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def read_raw_file(filename, **kwargs):
     &#34;&#34;&#34;
-    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates.
-    Input:
-        filename (str): filename of the file containing raw data
+    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
 
-    Output:
-        Timeseries object
+    Parameters
+    ----------
+    filename: (str) filename of the file containing raw data
+
+    Returns
+    -------
+    Timeseries object
     &#34;&#34;&#34;
     data = np.genfromtxt(filename, **kwargs)
     ts = timeseries.TimeSeries(data[:, 0], data[:, 1])

@@ -9,6 +9,7 @@ class Mdof:
     """
     CLass for MDOF system.
     """
+
     def __init__(self, M=None, C=None, K=None):
         """
         Defines MDOF system object using M, C and K matrices.
@@ -16,7 +17,9 @@ class Mdof:
         if C is None:
             C = np.zeros_like(M)
         if (M is None) or (K is None):
-            raise Exception("Incprrect input parameters. You must provide M and K both.")
+            raise Exception(
+                "Incprrect input parameters. You must provide M and K both."
+            )
 
         self.M = M
         self.K = K
@@ -31,19 +34,21 @@ class Mdof:
 
     def mdof_grad(self, t, y, tv, f, R):
         M, C, K = self.M, self.C, self.K
-        ft = np.array([np.interp(t, tv, f[:, i]) for i in range(np.shape(f)[1])]).reshape((6, 1))
+        ft = np.array(
+            [np.interp(t, tv, f[:, i]) for i in range(np.shape(f)[1])]
+        ).reshape((6, 1))
 
         n = np.shape(M)[0]
         Minv = np.linalg.inv(M)
-        A = np.zeros((2*n, 2*n))
-        A[0:n, n:2*n] = np.eye(n)
-        A[n:2*n, 0:n] = -Minv*K
-        A[n:2*n, n:2*n] = -Minv*C
+        A = np.zeros((2 * n, 2 * n))
+        A[0:n, n : 2 * n] = np.eye(n)
+        A[n : 2 * n, 0:n] = -Minv * K
+        A[n : 2 * n, n : 2 * n] = -Minv * C
         x = np.array(y)
 
         nInputEqs = 3
         for i in range(nInputEqs):
-            R[n+i::nInputEqs, i] = 1
+            R[n + i :: nInputEqs, i] = 1
 
         dy = np.matmul(A, x) + np.matmul(R, ft)
         # print(np.matmul(A, x))
@@ -54,14 +59,25 @@ class Mdof:
 
     def get_response(self, Ax=None, Ay=None, Az=None, r=None, **kwargs):
         """
-        Wrapper around solve_ivp module from scipy.integrate. It supports all
-        the arguments supported by solve_ivp.
-        Input :
-        Ax, Ay, Az (timeseries objects): timeseries defining loading/base acceleration (default) in X, Y and Z direction, respectively.
-        r (2D array): Influence coefficient matrix os shape (n*m) where n=Total DOFs, m=DOFs per floor (6). DOFs must be ordered as [x, y, z, thetaX, thetaY, thetaZ].
+        Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
+
+        Parameters
+        ----------
+        Ax: (timeseries objects) timeseries defining loading/base acceleration (default) in X direction
+
+        Ay: (timeseries objects) timeseries defining loading/base acceleration (default) in Y direction
+
+        Az: (timeseries objects) timeseries defining loading/base acceleration (default) in Z direction
+
+        r: (2D array) Influence coefficient matrix of shape (n*m) where n=Total DOFs, m=DOFs per floor (6). DOFs must be ordered as [x, y, z, thetaX, thetaY, thetaZ]
+
         **kwargs: arguments acceptable to scipy solve_ivp module
-        By default the solution will be obtained for duration = 2 * (ts.t duration).
-        This can be changed using t_span argument. Default method : BDF.
+
+        By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF
+
+        Returns
+        -------
+        MDOF response object
         """
         # # Total DOFs
         # n = np.shape(self.M)[0]
