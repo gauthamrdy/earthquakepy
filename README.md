@@ -74,7 +74,7 @@ o2 = ep.read_ops_element_output(filename, 3, compNames=["x", "y", "z"])  # 3 : n
 + Read OpenSees JSON model file
 
 ``` python
-model = ep.read_opr_json_model(jsonFile)
+model = ep.read_ops_json_model(jsonFile)
 ```
 
 Each object generated above has its own methods which are given in detail in the documentation. Please click on [this link](https://dbpatankar.github.io/earthquakepy) to view it.
