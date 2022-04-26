@@ -7,3 +7,6 @@
 # ignore all backup files
 *~
 /earthquakepy.egg-info/
+
+# ignore contents of dist
+dist/
