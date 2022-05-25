@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from .singledof import Sdof
 from scipy.fftpack import fft, fftfreq
 
-
 class TimeSeries:
     """
     TimeSeries object class. Defines time series
@@ -210,7 +209,7 @@ class TimeSeries:
         eps = np.sqrt(1 - m2**2 / (m0 * m4))
         return eps
 
-    def get_arias_intensity(self, g=False, m=1):
+    def get_arias_intensity(self, g=False):
         """
         Computes arias intensity:
 
@@ -220,15 +219,13 @@ class TimeSeries:
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
         
-        m: Scaling Factor
-        
         Returns
         -------
         array like:
             Arias intensity time series
 
         """
-        acc = self.y*m
+        acc = self.y
         dt = self.dt
         if g:
             acc = acc * 9.81
@@ -236,7 +233,7 @@ class TimeSeries:
         iaSeries = np.pi / (2 * 9.81) * cumtrapz(acc**2, dx=dt, initial=0)
         return iaSeries
 
-    def get_total_arias(self, g=False,m=1):
+    def get_total_arias(self, g=False):
         """
 
         Parameters
@@ -244,16 +241,14 @@ class TimeSeries:
         g: Bool, optional
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
-        
-        m: Scaling Factor
-        
+
         Returns
         -------
         Scalar:
             Total Arias Intensity
 
         """
-        acc = self.y*m
+        acc = self.y
         dt = self.dt
         if g:
             acc = acc * 9.81
@@ -289,7 +284,7 @@ class TimeSeries:
         index = np.where((cumIa > start * cumIa[-1]) & (cumIa < stop * cumIa[-1]))
         return index[0][-1] * dt - index[0][0] * dt
 
-    def get_destructive_potential(self, g=False,m=1):
+    def get_destructive_potential(self, g=False):
         """
         Computes destructiveness potential according to Araya and Sargoni (1984)
 
@@ -299,20 +294,18 @@ class TimeSeries:
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
         
-        m: Scaling Factor
-        
         Returns
         -------
         Scalar:
             Destructiveness potential
 
         """
-        acc = self.y*m
-        ia = self.get_total_arias(g=g)
-        u0 = len(np.where(np.diff(np.sign(acc)))[0])
+        acc = self.y
+        ia = self.get_total_arias(g=True)
+        u0 = len(np.where(np.diff(np.sign(acc)))[0])/self.time
         return ia / u0**2
 
-    def get_cum_abs_vel(self, g=False,m=1):
+    def get_cum_abs_vel(self, g=False):
         """
         Computes cummulative absolute velocity
 
@@ -322,22 +315,20 @@ class TimeSeries:
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
 
-        m: Scaling Factor
-        
         Returns
         -------
         Scalar:
             Cummulative Absolute Velocity
 
         """
-        acc = self.y*m
+        acc = self.y
         dt = self.dt
         if g:
             acc = acc * 9.81
         acc = np.absolute(acc)
         return trapz(acc, dx=dt)
 
-    def get_cum_abs_disp(self,m=1):
+    def get_cum_abs_disp(self):
         """
         Computes Cummulative Absolute Displacement
 
@@ -346,20 +337,20 @@ class TimeSeries:
 
         Parameters
         ----------
-        m: Scaling Factor
-
+        None
+        
         Returns
         -------
         Scalar:
             Cummulative Absolute Velocity
 
         """
-        vel = self.y*m
+        vel = self.y
         dt = self.dt
         vel = np.absolute(vel)
         return trapz(vel, dx=dt)
 
-    def get_specific_energy(self, m=1):
+    def get_specific_energy(self):
         """
 
         Computes specific energy density
@@ -369,19 +360,19 @@ class TimeSeries:
 
         Parameters
         ----------
-        m: Scaling Factor
-       
+        None
+        
         Returns
         -------
         Scalar:
             Specify Energy Density
 
         """
-        vel = self.y*m
+        vel = self.y
         dt = self.dt
         return trapz(vel**2, dx=dt)
 
-    def get_rms(self, g=False, m=1):
+    def get_rms(self, g=False):
         """
 
         Root-mean-square value of acceleration/velocity/displacement time series
@@ -392,7 +383,6 @@ class TimeSeries:
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
 
-        m: Scaling Factor
         
         Returns
         -------
@@ -401,7 +391,7 @@ class TimeSeries:
 
 
         """
-        val = self.y*m
+        val = self.y
         total_time = self.time
         dt = self.dt
         return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)
