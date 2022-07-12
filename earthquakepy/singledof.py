@@ -56,13 +56,12 @@ class Sdof:
             a += "{:10s}:{}\n".format(key, val)
         return a
 
-    def sdof_grad(self, t, y, tv, f):
+    def sdof_grad(self, t, y, ts, a):
         m, c, k = self.m, self.c, self.k
-        ft = np.interp(t, tv, f)
 
         A = np.array([[0, 1], [-k / m, -c / m]])
         x = np.array(y)
-        f = np.array([[0.0], [ft / m]])
+        f = np.array([[0.0], [ts.get_y(t) / m]])
         dy = np.matmul(A, x) + f
 
         return dy
@@ -100,7 +99,7 @@ class Sdof:
             "dense_output": False,
             "events": None,
             "vectorized": True,
-            "args": (ts.t, f),
+            "args": (ts, 1), # additional element 1 required in tuple due to bug in solve_ivp with only one argument
             "jac": np.array([[0, 1], [-self.k / self.m, -self.c / self.m]]),
         }
         kwargs = {**defaultArgs, **kwargs}
@@ -133,3 +132,98 @@ class SdofResponseTimeSeries(OdeResult):
             ax[i].plot(self.t, self.y[i], linewidth=0.5, color="black")
             ax[i].set_xlabel("Time (s)")
         return fig
+
+
+class SdofNL:
+    """
+    Class for nonlinear SDOF system.
+    """
+    def __init__(self, m=1, dampForce=None, springForce=None):
+        self.m = m
+        self.dampForce = dampForce
+        self.springForce = springForce
+
+    def __repr__(self):
+        a = ""
+        for key, val in vars(self).items():
+            a += "{:10s}:{}\n".format(key, val)
+        return a
+
+    def damping_force(self):
+        return self.dampForce
+
+    def spring_force(self):
+        return self.springForce
+
+
+    def sdof_grad(self, t, y, m, dampForce, springForce, extForce):
+        """
+        Defines state space form of nonlinear sdof system
+
+        Parameters
+        ----------
+        m: (scalar) mass
+        dampForce: (function or timeseries object) Damping force
+        springForce: (function or timeseries object) Spring force
+        extForce: (function or timeseries object) external force
+        """
+        dy = np.zeros(2)
+        if callable(dampForce):
+            dampF = dampForce(t, y[0], y[1])
+        else:
+            dampF = dampForce.get_y(t)
+
+        if callable(springForce):
+            sprF = springForce(t, y[0], y[1])
+        else:
+            sprF = springForce.get_y(t)
+
+        if callable(extForce):
+            extF = extForce(t)
+        else:
+            extF = extForce.get_y(t)
+        dy[0] = y[1]
+        dy[1] = 1/m*(extF - dampF - sprF)
+        return dy
+
+    def get_response(self, ts, tsType="baseExcitation", **kwargs):
+        """
+        Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
+
+        Parameters
+        ----------
+        ts: (timeseries object) timeseries defining loading/base excitation
+
+        tsType: (string) "baseExcitation" or "force"
+
+        **kwargs: arguments acceptable to scipy solve_ivp module
+
+        Returns
+        -------
+        SdofResponseTimeSeries object
+
+        By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+        """
+        if tsType == "baseExcitation":
+            f = -self.m * ts.y
+        elif tsType == "force":
+            f = ts.y
+        else:
+            raise Exception("Incorrect timeseries type given")
+
+        defaultArgs = {
+            "t_span": (ts.t[0], ts.t[-1] * 2),
+            "y0": [0.0, 0.0],
+            "method": "BDF",
+            "t_eval": None,
+            "dense_output": False,
+            "events": None,
+            "vectorized": False,
+            "args": (self.m, self.dampForce, self.springForce, ts),
+        }
+        kwargs = {**defaultArgs, **kwargs}
+
+        # r = solve_ivp(self.sdof_grad, **kwargs)
+        r = solve_ivp(self.sdof_grad, **kwargs)
+        acc = 1/self.m*(ts.get_y(r.t) - self.dampForce(r.t, r.y[0], r.y[1]) - self.springForce(r.t, r.y[0], r.y[1]))
+        return SdofResponseTimeSeries(r, acc)

@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import trapz, cumtrapz
 import matplotlib.pyplot as plt
-from .singledof import Sdof
+from .singledof import Sdof, SdofNL
 from scipy.fftpack import fft, fftfreq
 
 class TimeSeries:
@@ -17,7 +17,7 @@ class TimeSeries:
         y: (1D array) ordinates
         """
         if (type(t) == float) or (type(t) == int):
-            t = np.arange(0.0, len(y) * t - 0.1 * t, t)
+            t = np.arange(t, len(y) * t + 0.1 * t, t)
         self.t = t
         self.y = y
         self.npts = len(t)
@@ -26,7 +26,7 @@ class TimeSeries:
     def __repr__(self):
         a = ""
         for key, val in vars(self).items():
-            a += "{:10s}:{}\n".format(key, val)
+            a += "{:>10s}: {}\n".format(key, val)
         return a
 
     def set_tunit(self, unit):
@@ -71,9 +71,9 @@ class TimeSeries:
         """Total number of points in the record"""
         self.npts = npts
 
-    def set_time(self, time):
+    def set_duration(self, duration):
         """Total duration of the record in seconds"""
-        self.time = time
+        self.duration = duration
 
     def set_filepath(self, filepath):
         """Record filepath"""
@@ -98,6 +98,9 @@ class TimeSeries:
             ax.set_xscale("log")
         # plt.show()
         return fig
+
+    def get_y(self, t):
+        return np.interp(t, self.t, self.y)
 
     def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
         """
@@ -396,6 +399,38 @@ class TimeSeries:
         dt = self.dt
         return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)
 
+    def get_diff(self, edge_order=1):
+        """
+        Differentiate the time series with respect to 't' (default).
+        Uses numpy.gradient() internally.
+
+        Parameters
+        ----------
+        edge_order: Same as edge_order in numpy.gradient(). Default: 1
+
+        Returns
+        -------
+        1D array of same length as that of 't'.
+        """
+        return np.gradient(self.y, self.t, edge_order=edge_order)
+
+    def get_int(self, **kwargs):
+        """
+        Integrate the time series with respect to 't' (default).
+        Uses numpy.trapz() internally.
+
+        Parameters
+        ----------
+        All **kwargs supported by numpy.trapz()
+
+        Returns
+        -------
+        Scalar
+        """
+        defaultArgs = {"x": self.t}
+        kwargs = {**defaultArgs, **kwargs}
+        return np.trapz(self.y, **kwargs)
+
 
 class ResponseSpectrum:
     def __init__(self, T, Sd, Sv, Sa):
@@ -468,6 +503,8 @@ class FourierSpectrum:
         self.amplitude = np.abs(ordinate)
         self.phase = np.angle(ordinate)
         self.N = N
+        fSortIndices = np.argsort(self.frequencies)
+        self.unwrappedPhase = np.unwrap(self.phase[fSortIndices], np.pi)
 
     def __repr__(self):
         a = ""
@@ -486,25 +523,31 @@ class FourierSpectrum:
         Matplotlib Figure Object
 
         """
-        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-        ax[0].set_xlabel("Frequency (Hz)")
-        ax[0].set_ylabel("Fourier Amplitude")
-        ax[0].plot(
-            self.frequencies,
-            2.0 / self.N * self.amplitude,
+        fig = plt.figure(constrained_layout=True, **kwargs)
+        gs = plt.GridSpec(2, 2, figure=fig)
+        ax0 = fig.add_subplot(gs[0, :])
+        ax1 = fig.add_subplot(gs[1, 0])
+        ax2 = fig.add_subplot(gs[1, 1])
+
+        ax0.set_xlabel("Frequency (Hz)")
+        ax0.set_ylabel("Fourier Amplitude")
+        ax0.plot(
+            self.frequencies[:self.N//2],
+            2.0 / self.N * self.amplitude[:self.N//2],
             color="black",
             linewidth=0.5,
         )
-        ax[1].set_xlabel("Frequency (Hz)")
-        ax[1].set_ylabel("Phase angle")
-        ax[1].plot(self.frequencies, self.phase, color="black", linewidth=0.5)
-        ax[2].set_xlabel("Frequency (Hz)")
-        ax[2].set_ylabel("Unwrapped phase angle")
-        ax[2].plot(
-            self.frequencies, np.unwrap(self.phase), color="black", linewidth=0.5
+        ax1.set_xlabel("Frequency (Hz)")
+        ax1.set_ylabel("Phase angle")
+        ax1.plot(self.frequencies[:self.N//2], self.phase[:self.N//2], color="black", linewidth=0.5)
+        ax2.set_xlabel("Frequency (Hz)")
+        ax2.set_ylabel("Unwrapped phase angle")
+        ax2.plot(
+            np.sort(self.frequencies), self.unwrappedPhase, color="black", linewidth=0.5
         )
         if log:
-            ax[0].set_xscale("log")
+            ax0.set_xscale("log")
+
         return fig
 
 
