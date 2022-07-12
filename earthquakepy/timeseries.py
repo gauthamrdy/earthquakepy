@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from .singledof import Sdof
 from scipy.fftpack import fft, fftfreq
 
-
 class TimeSeries:
     """
     TimeSeries object class. Defines time series
@@ -219,7 +218,7 @@ class TimeSeries:
         g: Bool, optional
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
-
+        
         Returns
         -------
         array like:
@@ -294,7 +293,7 @@ class TimeSeries:
         g: Bool, optional
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
-
+        
         Returns
         -------
         Scalar:
@@ -302,8 +301,8 @@ class TimeSeries:
 
         """
         acc = self.y
-        ia = self.get_total_arias(g=g)
-        u0 = len(np.where(np.diff(np.sign(acc)))[0])
+        ia = self.get_total_arias(g=True)
+        u0 = len(np.where(np.diff(np.sign(acc)))[0])/self.time
         return ia / u0**2
 
     def get_cum_abs_vel(self, g=False):
@@ -339,7 +338,7 @@ class TimeSeries:
         Parameters
         ----------
         None
-
+        
         Returns
         -------
         Scalar:
@@ -362,7 +361,7 @@ class TimeSeries:
         Parameters
         ----------
         None
-
+        
         Returns
         -------
         Scalar:
@@ -384,6 +383,7 @@ class TimeSeries:
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in 'g' units are to be converted into 'm/sec^2'
 
+        
         Returns
         -------
         Scalar:

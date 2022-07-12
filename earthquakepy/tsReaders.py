@@ -3,13 +3,14 @@ import numpy as np
 from earthquakepy import timeseries
 
 
-def read_peer_nga_file(filepath):
+def read_peer_nga_file(filepath,m=1):
     """
     Reads PEER NGA record file and generates a timeseries object.
 
     Parameters
     ----------
     filepath (string): PEER NGA file path
+    m: Scaling factor, default = 1
 
     Returns
     -------
@@ -39,7 +40,7 @@ def read_peer_nga_file(filepath):
             j = i + nelms
             y[i:j] = [float(e) for e in elms]
 
-    ts = timeseries.TimeSeries(dt, y)
+    ts = timeseries.TimeSeries(dt, y*m)
     ts.set_tunit("s")
     ts.set_yunit(yunit)
     ts.set_eqname(eq)
