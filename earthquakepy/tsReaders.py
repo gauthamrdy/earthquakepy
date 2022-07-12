@@ -3,14 +3,14 @@ import numpy as np
 from earthquakepy import timeseries
 
 
-def read_peer_nga_file(filepath,m=1):
+def read_peer_nga_file(filepath, scale_factor=1):
     """
     Reads PEER NGA record file and generates a timeseries object.
 
     Parameters
     ----------
     filepath (string): PEER NGA file path
-    m: Scaling factor, default = 1
+    scale_factor: Scaling factor, default = 1
 
     Returns
     -------
@@ -25,13 +25,13 @@ def read_peer_nga_file(filepath,m=1):
         if n == 0:
             pass
         elif n == 1:
-            eq, eqDate, station, component = line.strip("\n").split(",")
+            eq, eqDate, station, component = [l.strip() for l in line.strip("\n").split(",")]
         elif n == 2:
-            yunit = line
+            yunit = line.strip()
         elif n == 3:
             npts = int(re.match(r".*= *([0-9]*),.*", line)[1])
             dt = float(re.match(r".*= *(0?\.[0-9]*) SEC", line)[1])
-            time = dt * npts
+            duration = dt * npts
             y = np.zeros(int(npts))
         else:
             elms = line.strip("\n").split()
@@ -40,7 +40,7 @@ def read_peer_nga_file(filepath,m=1):
             j = i + nelms
             y[i:j] = [float(e) for e in elms]
 
-    ts = timeseries.TimeSeries(dt, y*m)
+    ts = timeseries.TimeSeries(dt, y*scale_factor)
     ts.set_tunit("s")
     ts.set_yunit(yunit)
     ts.set_eqname(eq)
@@ -49,12 +49,12 @@ def read_peer_nga_file(filepath,m=1):
     ts.set_component(component)
     ts.set_npts(npts)
     ts.set_dt(dt)
-    ts.set_time(time)
+    ts.set_duration(duration)
     ts.set_filepath(filepath)
     return ts
 
 
-def read_raw_file(filename, **kwargs):
+def read_raw_timeseries_file(filename, **kwargs):
     """
     Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
 

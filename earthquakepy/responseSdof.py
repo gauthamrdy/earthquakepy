@@ -26,3 +26,24 @@ def sdof(**kwargs):
     Sdof object
     """
     return singledof.Sdof(**kwargs)
+
+
+def sdofNL(**kwargs):
+    """
+    Creates and returns nonlinear sdof system object.
+
+    Parameters
+    ----------
+    m (optional): mass of the system. Default=1.0
+    dampForce (optional): function or timeseries object representing damping force.
+        The function should have arguments (t, u, v, p) where t: independent variable,
+        u: first state variable, v: second state variable, p: Array/list of parameters
+    springForce (optional): function or timeseries object representing spring force.
+        The function should have arguments (t, u, v, p) where t: independent variable,
+        u: first state variable, v: second state variable, p: Array/list of parameters
+
+    Returns
+    -------
+    SdofNL object
+    """
+    return singledof.SdofNL(**kwargs)
