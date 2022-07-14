@@ -32,7 +32,7 @@ ts1 = ep.read_peer_nga_file(filename)
 + Read a raw file containing timeseries data
 
 ``` python
-ts2 = ep.read_raw_file(filename)
+ts2 = ep.read_raw_timeseries_file(filename)
 ```
 
 + Build a SDOF system object to carry out some magic later!
