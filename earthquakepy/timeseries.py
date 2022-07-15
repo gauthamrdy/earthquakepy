@@ -88,6 +88,10 @@ class TimeSeries:
         Matplotlib Figure Object
 
         """
+        defaultArgs = {
+            "figsize":(20,6),
+            }
+        kwargs = {**defaultArgs, **kwargs}
         fig, ax = plt.subplots(**kwargs)
         ax.plot(self.t, self.y, color="black", linewidth=0.5)
         if hasattr(self, "tunit"):
