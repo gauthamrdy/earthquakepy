@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from scipy.integrate import trapz, cumtrapz
 import matplotlib.pyplot as plt
 from .singledof import Sdof, SdofNL
