@@ -1,8 +1,10 @@
 import numpy as np
 from scipy.integrate import trapz, cumtrapz
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from .singledof import Sdof, SdofNL
 from scipy.fftpack import fft, fftfreq
+
 
 class TimeSeries:
     """
@@ -88,18 +90,16 @@ class TimeSeries:
         Matplotlib Figure Object
 
         """
-        defaultArgs = {
-            "figsize":(20,6),
-            }
-        kwargs = {**defaultArgs, **kwargs}
+        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y, color="black", linewidth=0.5)
+        ax.plot(self.t, self.y)
         if hasattr(self, "tunit"):
             ax.set_xlabel("t ({})".format(self.tunit))
         if hasattr(self, "yunit"):
             ax.set_ylabel(str(self.yunit))
         if log:
             ax.set_xscale("log")
+        ax.set_xlim(left=0)
         # plt.show()
         return fig
 
@@ -469,10 +469,11 @@ class ResponseSpectrum:
         Matplotlib Figure Object
 
         """
-        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-        ax[0].plot(self.T, self.Sd, color="black", linewidth=0.5)
-        ax[1].plot(self.T, self.Sv, color="black", linewidth=0.5)
-        ax[2].plot(self.T, self.Sa, color="black", linewidth=0.5)
+        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
+        fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
+        ax[0].plot(self.T, self.Sd)
+        ax[1].plot(self.T, self.Sv)
+        ax[2].plot(self.T, self.Sa)
         ax[0].set_xlabel("Period (s)")
         ax[1].set_xlabel("Period (s)")
         ax[2].set_xlabel("Period (s)")
@@ -527,7 +528,11 @@ class FourierSpectrum:
         Matplotlib Figure Object
 
         """
+        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
+        defaultArgs = {"figsize" : (10,5)}
+        kwargs = {**defaultArgs, **kwargs}
         fig = plt.figure(constrained_layout=True, **kwargs)
+
         gs = plt.GridSpec(2, 2, figure=fig)
         ax0 = fig.add_subplot(gs[0, :])
         ax1 = fig.add_subplot(gs[1, 0])
@@ -538,16 +543,14 @@ class FourierSpectrum:
         ax0.plot(
             self.frequencies[:self.N//2],
             2.0 / self.N * self.amplitude[:self.N//2],
-            color="black",
-            linewidth=0.5,
         )
         ax1.set_xlabel("Frequency (Hz)")
         ax1.set_ylabel("Phase angle")
-        ax1.plot(self.frequencies[:self.N//2], self.phase[:self.N//2], color="black", linewidth=0.5)
+        ax1.plot(self.frequencies[:self.N//2], self.phase[:self.N//2])
         ax2.set_xlabel("Frequency (Hz)")
         ax2.set_ylabel("Unwrapped phase angle")
         ax2.plot(
-            np.sort(self.frequencies), self.unwrappedPhase, color="black", linewidth=0.5
+            np.sort(self.frequencies), self.unwrappedPhase
         )
         if log:
             ax0.set_xscale("log")
@@ -626,13 +629,12 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         """
+        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
         fig, ax = plt.subplots()
         ax.plot(
             self.frequencies,
             2.0 / self.N * self.amplitude,
-            color="black",
-            linewidth=0.5,
-        )
+            )
         ax.set_xlabel("Frequency (Hz)")
         ax.set_ylabel("Power Amplitude")
         if log:
