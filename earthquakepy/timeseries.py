@@ -309,7 +309,7 @@ class TimeSeries:
         """
         acc = self.y
         ia = self.get_total_arias(g=True)
-        u0 = len(np.where(np.diff(np.sign(acc)))[0])/self.time
+        u0 = len(np.where(np.diff(np.sign(acc)))[0])/self.duration
         return ia / u0**2
 
     def get_cum_abs_vel(self, g=False):
@@ -399,7 +399,7 @@ class TimeSeries:
 
         """
         val = self.y
-        total_time = self.time
+        total_time = self.duration
         dt = self.dt
         return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)
 
