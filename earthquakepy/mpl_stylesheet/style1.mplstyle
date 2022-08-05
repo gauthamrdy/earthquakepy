@@ -1,0 +1,45 @@
+# Axes
+axes.labelsize : 8
+axes.grid           : True   # display grid or not
+axes.prop_cycle    : cycler('color', ['black','1f77b4', 'ff7f0e', '2ca02c', 'd62728', '9467bd', '8c564b', 'e377c2', '7f7f7f', 'bcbd22', '17becf'])
+                      # color cycle for plot lines  as list of string
+                      # colorspecs: single letter, long name, or web-style hex
+
+# Lines
+lines.linewidth : 1
+
+# Tick
+xtick.labelsize : 10
+ytick.labelsize : 10
+xtick.major.size : 7
+ytick.major.size : 7
+xtick.minor.size : 3
+ytick.minor.size : 3
+xtick.direction      : in
+ytick.direction      : in 
+xtick.major.width    : 1
+ytick.major.width    : 1
+xtick.minor.width    : 1
+ytick.minor.width    : 1
+xtick.minor.visible  : True
+ytick.minor.visible  : True
+
+
+# GRIDS
+grid.linewidth   :   0.5       # in points
+grid.linestyle   :   --         # solid
+grid.color       :   black
+
+# The three standard dash patterns.  These are scaled by the linewidth.
+lines.dashed_pattern : 7,12
+
+# Figure
+figure.figsize   : 10, 4   # figure size in inches
+figure.dpi       : 300      # figure dots per inch
+
+#Text
+text.usetex         : True
+#text.latex.unicode : True
+
+#Font
+font.family         : serif
