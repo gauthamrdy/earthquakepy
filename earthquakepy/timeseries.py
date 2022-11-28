@@ -89,7 +89,7 @@ class TimeSeries:
 
         """
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y, color="black", linewidth=0.5)
+        ax.plot(self.t, self.y, color="black", linewidth=0.5,label = str(self.eqName)+'_'+ str(self.component))
         if hasattr(self, "tunit"):
             ax.set_xlabel("t ({})".format(self.tunit))
         if hasattr(self, "yunit"):
@@ -97,6 +97,7 @@ class TimeSeries:
         if log:
             ax.set_xscale("log")
         # plt.show()
+        ax.legend()
         return fig
 
     def get_y(self, t):
