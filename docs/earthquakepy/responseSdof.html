@@ -53,7 +53,28 @@ def sdof(**kwargs):
     -------
     Sdof object
     &#34;&#34;&#34;
-    return singledof.Sdof(**kwargs)</code></pre>
+    return singledof.Sdof(**kwargs)
+
+
+def sdofNL(**kwargs):
+    &#34;&#34;&#34;
+    Creates and returns nonlinear sdof system object.
+
+    Parameters
+    ----------
+    m (optional): mass of the system. Default=1.0
+    dampForce (optional): function or timeseries object representing damping force.
+        The function should have arguments (t, u, v, p) where t: independent variable,
+        u: first state variable, v: second state variable, p: Array/list of parameters
+    springForce (optional): function or timeseries object representing spring force.
+        The function should have arguments (t, u, v, p) where t: independent variable,
+        u: first state variable, v: second state variable, p: Array/list of parameters
+
+    Returns
+    -------
+    SdofNL object
+    &#34;&#34;&#34;
+    return singledof.SdofNL(**kwargs)</code></pre>
 </details>
 </section>
 <section>
@@ -120,6 +141,49 @@ def sdof(**kwargs):
     return singledof.Sdof(**kwargs)</code></pre>
 </details>
 </dd>
+<dt id="earthquakepy.responseSdof.sdofNL"><code class="name flex">
+<span>def <span class="ident">sdofNL</span></span>(<span>**kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates and returns nonlinear sdof system object.</p>
+<h2 id="parameters">Parameters</h2>
+<p>m (optional): mass of the system. Default=1.0
+dampForce (optional): function or timeseries object representing damping force.
+The function should have arguments (t, u, v, p) where t: independent variable,
+u: first state variable, v: second state variable, p: Array/list of parameters
+springForce (optional): function or timeseries object representing spring force.
+The function should have arguments (t, u, v, p) where t: independent variable,
+u: first state variable, v: second state variable, p: Array/list of parameters</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>SdofNL object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sdofNL(**kwargs):
+    &#34;&#34;&#34;
+    Creates and returns nonlinear sdof system object.
+
+    Parameters
+    ----------
+    m (optional): mass of the system. Default=1.0
+    dampForce (optional): function or timeseries object representing damping force.
+        The function should have arguments (t, u, v, p) where t: independent variable,
+        u: first state variable, v: second state variable, p: Array/list of parameters
+    springForce (optional): function or timeseries object representing spring force.
+        The function should have arguments (t, u, v, p) where t: independent variable,
+        u: first state variable, v: second state variable, p: Array/list of parameters
+
+    Returns
+    -------
+    SdofNL object
+    &#34;&#34;&#34;
+    return singledof.SdofNL(**kwargs)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -139,6 +203,7 @@ def sdof(**kwargs):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="earthquakepy.responseSdof.sdof" href="#earthquakepy.responseSdof.sdof">sdof</a></code></li>
+<li><code><a title="earthquakepy.responseSdof.sdofNL" href="#earthquakepy.responseSdof.sdofNL">sdofNL</a></code></li>
 </ul>
 </li>
 </ul>

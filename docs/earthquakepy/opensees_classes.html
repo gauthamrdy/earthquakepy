@@ -56,13 +56,13 @@ class OpenSeesNodeOutput:
 
         self.t = data[:, 0]
         d = np.split(data[:, 1::], nNodes, axis=1)
-        dataDir = {}
-        for i in nodeTags:
-            dataDir[i] = {}
+        dataDict = {}
+        for i in range(len(nodeTags)):
+            dataDict[nodeTags[i]] = {}
             for j in range(ncomps):
-                dataDir[i][compNames[j]] = d[i - 1][:, j]
+                dataDict[nodeTags[i]][compNames[j]] = d[i][:, j]
 
-        self.data = dataDir
+        self.data = dataDict
         self.nodeTags = nodeTags
         self.compNames = compNames
 
@@ -278,13 +278,13 @@ class OpenSeesModel:
 
         self.t = data[:, 0]
         d = np.split(data[:, 1::], nNodes, axis=1)
-        dataDir = {}
-        for i in nodeTags:
-            dataDir[i] = {}
+        dataDict = {}
+        for i in range(len(nodeTags)):
+            dataDict[nodeTags[i]] = {}
             for j in range(ncomps):
-                dataDir[i][compNames[j]] = d[i - 1][:, j]
+                dataDict[nodeTags[i]][compNames[j]] = d[i][:, j]
 
-        self.data = dataDir
+        self.data = dataDict
         self.nodeTags = nodeTags
         self.compNames = compNames
 

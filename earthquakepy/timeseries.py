@@ -26,6 +26,7 @@ class TimeSeries:
         self.dt = t[1] - t[0]
 
     def __repr__(self):
+        np.set_printoptions(threshold=50)
         a = ""
         for key, val in vars(self).items():
             a += "{:>10s}: {}\n".format(key, val)

@@ -29,7 +29,8 @@
 <pre><code class="python">import numpy as np
 from scipy.integrate import trapz, cumtrapz
 import matplotlib.pyplot as plt
-from .singledof import Sdof
+import matplotlib as mpl
+from .singledof import Sdof, SdofNL
 from scipy.fftpack import fft, fftfreq
 
 
@@ -46,16 +47,17 @@ class TimeSeries:
         y: (1D array) ordinates
         &#34;&#34;&#34;
         if (type(t) == float) or (type(t) == int):
-            t = np.arange(0.0, len(y) * t - 0.1 * t, t)
+            t = np.arange(t, len(y) * t + 0.1 * t, t)
         self.t = t
         self.y = y
         self.npts = len(t)
         self.dt = t[1] - t[0]
 
     def __repr__(self):
+        np.set_printoptions(threshold=50)
         a = &#34;&#34;
         for key, val in vars(self).items():
-            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+            a += &#34;{:&gt;10s}: {}\n&#34;.format(key, val)
         return a
 
     def set_tunit(self, unit):
@@ -100,9 +102,9 @@ class TimeSeries:
         &#34;&#34;&#34;Total number of points in the record&#34;&#34;&#34;
         self.npts = npts
 
-    def set_time(self, time):
+    def set_duration(self, duration):
         &#34;&#34;&#34;Total duration of the record in seconds&#34;&#34;&#34;
-        self.time = time
+        self.duration = duration
 
     def set_filepath(self, filepath):
         &#34;&#34;&#34;Record filepath&#34;&#34;&#34;
@@ -117,16 +119,21 @@ class TimeSeries:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y, color=&#34;black&#34;, linewidth=0.5)
+        ax.plot(self.t, self.y)
         if hasattr(self, &#34;tunit&#34;):
             ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
         if hasattr(self, &#34;yunit&#34;):
             ax.set_ylabel(str(self.yunit))
         if log:
             ax.set_xscale(&#34;log&#34;)
+        ax.set_xlim(left=0)
         # plt.show()
         return fig
+
+    def get_y(self, t):
+        return np.interp(t, self.t, self.y)
 
     def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
         &#34;&#34;&#34;
@@ -247,7 +254,7 @@ class TimeSeries:
         g: Bool, optional
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
-
+        
         Returns
         -------
         array like:
@@ -322,7 +329,7 @@ class TimeSeries:
         g: Bool, optional
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
-
+        
         Returns
         -------
         Scalar:
@@ -330,8 +337,8 @@ class TimeSeries:
 
         &#34;&#34;&#34;
         acc = self.y
-        ia = self.get_total_arias(g=g)
-        u0 = len(np.where(np.diff(np.sign(acc)))[0])
+        ia = self.get_total_arias(g=True)
+        u0 = len(np.where(np.diff(np.sign(acc)))[0])/self.duration
         return ia / u0**2
 
     def get_cum_abs_vel(self, g=False):
@@ -367,7 +374,7 @@ class TimeSeries:
         Parameters
         ----------
         None
-
+        
         Returns
         -------
         Scalar:
@@ -390,7 +397,7 @@ class TimeSeries:
         Parameters
         ----------
         None
-
+        
         Returns
         -------
         Scalar:
@@ -412,6 +419,7 @@ class TimeSeries:
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
 
+        
         Returns
         -------
         Scalar:
@@ -420,9 +428,41 @@ class TimeSeries:
 
         &#34;&#34;&#34;
         val = self.y
-        total_time = self.time
+        total_time = self.duration
         dt = self.dt
         return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)
+
+    def get_diff(self, edge_order=1):
+        &#34;&#34;&#34;
+        Differentiate the time series with respect to &#39;t&#39; (default).
+        Uses numpy.gradient() internally.
+
+        Parameters
+        ----------
+        edge_order: Same as edge_order in numpy.gradient(). Default: 1
+
+        Returns
+        -------
+        1D array of same length as that of &#39;t&#39;.
+        &#34;&#34;&#34;
+        return np.gradient(self.y, self.t, edge_order=edge_order)
+
+    def get_int(self, **kwargs):
+        &#34;&#34;&#34;
+        Integrate the time series with respect to &#39;t&#39; (default).
+        Uses numpy.trapz() internally.
+
+        Parameters
+        ----------
+        All **kwargs supported by numpy.trapz()
+
+        Returns
+        -------
+        Scalar
+        &#34;&#34;&#34;
+        defaultArgs = {&#34;x&#34;: self.t}
+        kwargs = {**defaultArgs, **kwargs}
+        return np.trapz(self.y, **kwargs)
 
 
 class ResponseSpectrum:
@@ -458,10 +498,11 @@ class ResponseSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-        ax[0].plot(self.T, self.Sd, color=&#34;black&#34;, linewidth=0.5)
-        ax[1].plot(self.T, self.Sv, color=&#34;black&#34;, linewidth=0.5)
-        ax[2].plot(self.T, self.Sa, color=&#34;black&#34;, linewidth=0.5)
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
+        fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
+        ax[0].plot(self.T, self.Sd)
+        ax[1].plot(self.T, self.Sv)
+        ax[2].plot(self.T, self.Sa)
         ax[0].set_xlabel(&#34;Period (s)&#34;)
         ax[1].set_xlabel(&#34;Period (s)&#34;)
         ax[2].set_xlabel(&#34;Period (s)&#34;)
@@ -496,6 +537,8 @@ class FourierSpectrum:
         self.amplitude = np.abs(ordinate)
         self.phase = np.angle(ordinate)
         self.N = N
+        fSortIndices = np.argsort(self.frequencies)
+        self.unwrappedPhase = np.unwrap(self.phase[fSortIndices], np.pi)
 
     def __repr__(self):
         a = &#34;&#34;
@@ -514,25 +557,33 @@ class FourierSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-        ax[0].set_xlabel(&#34;Frequency (Hz)&#34;)
-        ax[0].set_ylabel(&#34;Fourier Amplitude&#34;)
-        ax[0].plot(
-            self.frequencies,
-            2.0 / self.N * self.amplitude,
-            color=&#34;black&#34;,
-            linewidth=0.5,
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
+        defaultArgs = {&#34;figsize&#34; : (10,5)}
+        kwargs = {**defaultArgs, **kwargs}
+        fig = plt.figure(constrained_layout=True, **kwargs)
+
+        gs = plt.GridSpec(2, 2, figure=fig)
+        ax0 = fig.add_subplot(gs[0, :])
+        ax1 = fig.add_subplot(gs[1, 0])
+        ax2 = fig.add_subplot(gs[1, 1])
+
+        ax0.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax0.set_ylabel(&#34;Fourier Amplitude&#34;)
+        ax0.plot(
+            self.frequencies[:self.N//2],
+            2.0 / self.N * self.amplitude[:self.N//2],
         )
-        ax[1].set_xlabel(&#34;Frequency (Hz)&#34;)
-        ax[1].set_ylabel(&#34;Phase angle&#34;)
-        ax[1].plot(self.frequencies, self.phase, color=&#34;black&#34;, linewidth=0.5)
-        ax[2].set_xlabel(&#34;Frequency (Hz)&#34;)
-        ax[2].set_ylabel(&#34;Unwrapped phase angle&#34;)
-        ax[2].plot(
-            self.frequencies, np.unwrap(self.phase), color=&#34;black&#34;, linewidth=0.5
+        ax1.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax1.set_ylabel(&#34;Phase angle&#34;)
+        ax1.plot(self.frequencies[:self.N//2], self.phase[:self.N//2])
+        ax2.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax2.set_ylabel(&#34;Unwrapped phase angle&#34;)
+        ax2.plot(
+            np.sort(self.frequencies), self.unwrappedPhase
         )
         if log:
-            ax[0].set_xscale(&#34;log&#34;)
+            ax0.set_xscale(&#34;log&#34;)
+
         return fig
 
 
@@ -607,13 +658,12 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots()
         ax.plot(
             self.frequencies,
             2.0 / self.N * self.amplitude,
-            color=&#34;black&#34;,
-            linewidth=0.5,
-        )
+            )
         ax.set_xlabel(&#34;Frequency (Hz)&#34;)
         ax.set_ylabel(&#34;Power Amplitude&#34;)
         if log:
@@ -665,6 +715,8 @@ class PowerSpectrum:
         self.amplitude = np.abs(ordinate)
         self.phase = np.angle(ordinate)
         self.N = N
+        fSortIndices = np.argsort(self.frequencies)
+        self.unwrappedPhase = np.unwrap(self.phase[fSortIndices], np.pi)
 
     def __repr__(self):
         a = &#34;&#34;
@@ -683,25 +735,33 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-        ax[0].set_xlabel(&#34;Frequency (Hz)&#34;)
-        ax[0].set_ylabel(&#34;Fourier Amplitude&#34;)
-        ax[0].plot(
-            self.frequencies,
-            2.0 / self.N * self.amplitude,
-            color=&#34;black&#34;,
-            linewidth=0.5,
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
+        defaultArgs = {&#34;figsize&#34; : (10,5)}
+        kwargs = {**defaultArgs, **kwargs}
+        fig = plt.figure(constrained_layout=True, **kwargs)
+
+        gs = plt.GridSpec(2, 2, figure=fig)
+        ax0 = fig.add_subplot(gs[0, :])
+        ax1 = fig.add_subplot(gs[1, 0])
+        ax2 = fig.add_subplot(gs[1, 1])
+
+        ax0.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax0.set_ylabel(&#34;Fourier Amplitude&#34;)
+        ax0.plot(
+            self.frequencies[:self.N//2],
+            2.0 / self.N * self.amplitude[:self.N//2],
         )
-        ax[1].set_xlabel(&#34;Frequency (Hz)&#34;)
-        ax[1].set_ylabel(&#34;Phase angle&#34;)
-        ax[1].plot(self.frequencies, self.phase, color=&#34;black&#34;, linewidth=0.5)
-        ax[2].set_xlabel(&#34;Frequency (Hz)&#34;)
-        ax[2].set_ylabel(&#34;Unwrapped phase angle&#34;)
-        ax[2].plot(
-            self.frequencies, np.unwrap(self.phase), color=&#34;black&#34;, linewidth=0.5
+        ax1.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax1.set_ylabel(&#34;Phase angle&#34;)
+        ax1.plot(self.frequencies[:self.N//2], self.phase[:self.N//2])
+        ax2.set_xlabel(&#34;Frequency (Hz)&#34;)
+        ax2.set_ylabel(&#34;Unwrapped phase angle&#34;)
+        ax2.plot(
+            np.sort(self.frequencies), self.unwrappedPhase
         )
         if log:
-            ax[0].set_xscale(&#34;log&#34;)
+            ax0.set_xscale(&#34;log&#34;)
+
         return fig</code></pre>
 </details>
 <h3>Methods</h3>
@@ -732,25 +792,33 @@ class PowerSpectrum:
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
-    fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-    ax[0].set_xlabel(&#34;Frequency (Hz)&#34;)
-    ax[0].set_ylabel(&#34;Fourier Amplitude&#34;)
-    ax[0].plot(
-        self.frequencies,
-        2.0 / self.N * self.amplitude,
-        color=&#34;black&#34;,
-        linewidth=0.5,
+    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
+    defaultArgs = {&#34;figsize&#34; : (10,5)}
+    kwargs = {**defaultArgs, **kwargs}
+    fig = plt.figure(constrained_layout=True, **kwargs)
+
+    gs = plt.GridSpec(2, 2, figure=fig)
+    ax0 = fig.add_subplot(gs[0, :])
+    ax1 = fig.add_subplot(gs[1, 0])
+    ax2 = fig.add_subplot(gs[1, 1])
+
+    ax0.set_xlabel(&#34;Frequency (Hz)&#34;)
+    ax0.set_ylabel(&#34;Fourier Amplitude&#34;)
+    ax0.plot(
+        self.frequencies[:self.N//2],
+        2.0 / self.N * self.amplitude[:self.N//2],
     )
-    ax[1].set_xlabel(&#34;Frequency (Hz)&#34;)
-    ax[1].set_ylabel(&#34;Phase angle&#34;)
-    ax[1].plot(self.frequencies, self.phase, color=&#34;black&#34;, linewidth=0.5)
-    ax[2].set_xlabel(&#34;Frequency (Hz)&#34;)
-    ax[2].set_ylabel(&#34;Unwrapped phase angle&#34;)
-    ax[2].plot(
-        self.frequencies, np.unwrap(self.phase), color=&#34;black&#34;, linewidth=0.5
+    ax1.set_xlabel(&#34;Frequency (Hz)&#34;)
+    ax1.set_ylabel(&#34;Phase angle&#34;)
+    ax1.plot(self.frequencies[:self.N//2], self.phase[:self.N//2])
+    ax2.set_xlabel(&#34;Frequency (Hz)&#34;)
+    ax2.set_ylabel(&#34;Unwrapped phase angle&#34;)
+    ax2.plot(
+        np.sort(self.frequencies), self.unwrappedPhase
     )
     if log:
-        ax[0].set_xscale(&#34;log&#34;)
+        ax0.set_xscale(&#34;log&#34;)
+
     return fig</code></pre>
 </details>
 </dd>
@@ -844,13 +912,12 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots()
         ax.plot(
             self.frequencies,
             2.0 / self.N * self.amplitude,
-            color=&#34;black&#34;,
-            linewidth=0.5,
-        )
+            )
         ax.set_xlabel(&#34;Frequency (Hz)&#34;)
         ax.set_ylabel(&#34;Power Amplitude&#34;)
         if log:
@@ -947,13 +1014,12 @@ Parameters</p>
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
+    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
     fig, ax = plt.subplots()
     ax.plot(
         self.frequencies,
         2.0 / self.N * self.amplitude,
-        color=&#34;black&#34;,
-        linewidth=0.5,
-    )
+        )
     ax.set_xlabel(&#34;Frequency (Hz)&#34;)
     ax.set_ylabel(&#34;Power Amplitude&#34;)
     if log:
@@ -1018,10 +1084,11 @@ Parameters</p>
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-        ax[0].plot(self.T, self.Sd, color=&#34;black&#34;, linewidth=0.5)
-        ax[1].plot(self.T, self.Sv, color=&#34;black&#34;, linewidth=0.5)
-        ax[2].plot(self.T, self.Sa, color=&#34;black&#34;, linewidth=0.5)
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
+        fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
+        ax[0].plot(self.T, self.Sd)
+        ax[1].plot(self.T, self.Sv)
+        ax[2].plot(self.T, self.Sa)
         ax[0].set_xlabel(&#34;Period (s)&#34;)
         ax[1].set_xlabel(&#34;Period (s)&#34;)
         ax[2].set_xlabel(&#34;Period (s)&#34;)
@@ -1066,10 +1133,11 @@ Parameters</p>
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
-    fig, ax = plt.subplots(nrows=1, ncols=3, **kwargs)
-    ax[0].plot(self.T, self.Sd, color=&#34;black&#34;, linewidth=0.5)
-    ax[1].plot(self.T, self.Sv, color=&#34;black&#34;, linewidth=0.5)
-    ax[2].plot(self.T, self.Sa, color=&#34;black&#34;, linewidth=0.5)
+    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
+    fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
+    ax[0].plot(self.T, self.Sd)
+    ax[1].plot(self.T, self.Sv)
+    ax[2].plot(self.T, self.Sa)
     ax[0].set_xlabel(&#34;Period (s)&#34;)
     ax[1].set_xlabel(&#34;Period (s)&#34;)
     ax[2].set_xlabel(&#34;Period (s)&#34;)
@@ -1119,16 +1187,17 @@ Parameters</p>
         y: (1D array) ordinates
         &#34;&#34;&#34;
         if (type(t) == float) or (type(t) == int):
-            t = np.arange(0.0, len(y) * t - 0.1 * t, t)
+            t = np.arange(t, len(y) * t + 0.1 * t, t)
         self.t = t
         self.y = y
         self.npts = len(t)
         self.dt = t[1] - t[0]
 
     def __repr__(self):
+        np.set_printoptions(threshold=50)
         a = &#34;&#34;
         for key, val in vars(self).items():
-            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+            a += &#34;{:&gt;10s}: {}\n&#34;.format(key, val)
         return a
 
     def set_tunit(self, unit):
@@ -1173,9 +1242,9 @@ Parameters</p>
         &#34;&#34;&#34;Total number of points in the record&#34;&#34;&#34;
         self.npts = npts
 
-    def set_time(self, time):
+    def set_duration(self, duration):
         &#34;&#34;&#34;Total duration of the record in seconds&#34;&#34;&#34;
-        self.time = time
+        self.duration = duration
 
     def set_filepath(self, filepath):
         &#34;&#34;&#34;Record filepath&#34;&#34;&#34;
@@ -1190,16 +1259,21 @@ Parameters</p>
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
+        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y, color=&#34;black&#34;, linewidth=0.5)
+        ax.plot(self.t, self.y)
         if hasattr(self, &#34;tunit&#34;):
             ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
         if hasattr(self, &#34;yunit&#34;):
             ax.set_ylabel(str(self.yunit))
         if log:
             ax.set_xscale(&#34;log&#34;)
+        ax.set_xlim(left=0)
         # plt.show()
         return fig
+
+    def get_y(self, t):
+        return np.interp(t, self.t, self.y)
 
     def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
         &#34;&#34;&#34;
@@ -1320,7 +1394,7 @@ Parameters</p>
         g: Bool, optional
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
-
+        
         Returns
         -------
         array like:
@@ -1395,7 +1469,7 @@ Parameters</p>
         g: Bool, optional
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
-
+        
         Returns
         -------
         Scalar:
@@ -1403,8 +1477,8 @@ Parameters</p>
 
         &#34;&#34;&#34;
         acc = self.y
-        ia = self.get_total_arias(g=g)
-        u0 = len(np.where(np.diff(np.sign(acc)))[0])
+        ia = self.get_total_arias(g=True)
+        u0 = len(np.where(np.diff(np.sign(acc)))[0])/self.duration
         return ia / u0**2
 
     def get_cum_abs_vel(self, g=False):
@@ -1440,7 +1514,7 @@ Parameters</p>
         Parameters
         ----------
         None
-
+        
         Returns
         -------
         Scalar:
@@ -1463,7 +1537,7 @@ Parameters</p>
         Parameters
         ----------
         None
-
+        
         Returns
         -------
         Scalar:
@@ -1485,6 +1559,7 @@ Parameters</p>
             g=True multiplies acceleration values with g=9.81 m/sec^2.
             Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
 
+        
         Returns
         -------
         Scalar:
@@ -1493,9 +1568,41 @@ Parameters</p>
 
         &#34;&#34;&#34;
         val = self.y
-        total_time = self.time
+        total_time = self.duration
         dt = self.dt
-        return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)</code></pre>
+        return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)
+
+    def get_diff(self, edge_order=1):
+        &#34;&#34;&#34;
+        Differentiate the time series with respect to &#39;t&#39; (default).
+        Uses numpy.gradient() internally.
+
+        Parameters
+        ----------
+        edge_order: Same as edge_order in numpy.gradient(). Default: 1
+
+        Returns
+        -------
+        1D array of same length as that of &#39;t&#39;.
+        &#34;&#34;&#34;
+        return np.gradient(self.y, self.t, edge_order=edge_order)
+
+    def get_int(self, **kwargs):
+        &#34;&#34;&#34;
+        Integrate the time series with respect to &#39;t&#39; (default).
+        Uses numpy.trapz() internally.
+
+        Parameters
+        ----------
+        All **kwargs supported by numpy.trapz()
+
+        Returns
+        -------
+        Scalar
+        &#34;&#34;&#34;
+        defaultArgs = {&#34;x&#34;: self.t}
+        kwargs = {**defaultArgs, **kwargs}
+        return np.trapz(self.y, **kwargs)</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -1528,7 +1635,7 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     g: Bool, optional
         g=True multiplies acceleration values with g=9.81 m/sec^2.
         Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
-
+    
     Returns
     -------
     array like:
@@ -1573,7 +1680,7 @@ Please make sure to use velocity time series as input to compute cummulative abs
     Parameters
     ----------
     None
-
+    
     Returns
     -------
     Scalar:
@@ -1655,7 +1762,7 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     g: Bool, optional
         g=True multiplies acceleration values with g=9.81 m/sec^2.
         Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
-
+    
     Returns
     -------
     Scalar:
@@ -1663,9 +1770,42 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
 
     &#34;&#34;&#34;
     acc = self.y
-    ia = self.get_total_arias(g=g)
-    u0 = len(np.where(np.diff(np.sign(acc)))[0])
+    ia = self.get_total_arias(g=True)
+    u0 = len(np.where(np.diff(np.sign(acc)))[0])/self.duration
     return ia / u0**2</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_diff"><code class="name flex">
+<span>def <span class="ident">get_diff</span></span>(<span>self, edge_order=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Differentiate the time series with respect to 't' (default).
+Uses numpy.gradient() internally.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>edge_order</code></strong> :&ensp;<code>Same as edge_order in numpy.gradient(). Default: 1</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>1D array of same length as that of 't'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_diff(self, edge_order=1):
+    &#34;&#34;&#34;
+    Differentiate the time series with respect to &#39;t&#39; (default).
+    Uses numpy.gradient() internally.
+
+    Parameters
+    ----------
+    edge_order: Same as edge_order in numpy.gradient(). Default: 1
+
+    Returns
+    -------
+    1D array of same length as that of &#39;t&#39;.
+    &#34;&#34;&#34;
+    return np.gradient(self.y, self.t, edge_order=edge_order)</code></pre>
 </details>
 </dd>
 <dt id="earthquakepy.timeseries.TimeSeries.get_epsilon"><code class="name flex">
@@ -1722,6 +1862,41 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     # FAmp = np.abs(yf[0:N//2])
     freq = fftfreq(N, T)  # [:N//2]
     return FourierSpectrum(freq, yf, N)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_int"><code class="name flex">
+<span>def <span class="ident">get_int</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Integrate the time series with respect to 't' (default).
+Uses numpy.trapz() internally.</p>
+<h2 id="parameters">Parameters</h2>
+<p>All **kwargs supported by numpy.trapz()</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Scalar</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_int(self, **kwargs):
+    &#34;&#34;&#34;
+    Integrate the time series with respect to &#39;t&#39; (default).
+    Uses numpy.trapz() internally.
+
+    Parameters
+    ----------
+    All **kwargs supported by numpy.trapz()
+
+    Returns
+    -------
+    Scalar
+    &#34;&#34;&#34;
+    defaultArgs = {&#34;x&#34;: self.t}
+    kwargs = {**defaultArgs, **kwargs}
+    return np.trapz(self.y, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="earthquakepy.timeseries.TimeSeries.get_mean_frequency"><code class="name flex">
@@ -1899,6 +2074,7 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
         g=True multiplies acceleration values with g=9.81 m/sec^2.
         Used when acceleration values in &#39;g&#39; units are to be converted into &#39;m/sec^2&#39;
 
+    
     Returns
     -------
     Scalar:
@@ -1907,7 +2083,7 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
 
     &#34;&#34;&#34;
     val = self.y
-    total_time = self.time
+    total_time = self.duration
     dt = self.dt
     return np.sqrt(trapz(val**2, dx=dt) * total_time**-1)</code></pre>
 </details>
@@ -1993,7 +2169,7 @@ Please use velocity time series as input to compute specific energy density.</p>
     Parameters
     ----------
     None
-
+    
     Returns
     -------
     Scalar:
@@ -2046,6 +2222,19 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     return ia</code></pre>
 </details>
 </dd>
+<dt id="earthquakepy.timeseries.TimeSeries.get_y"><code class="name flex">
+<span>def <span class="ident">get_y</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_y(self, t):
+    return np.interp(t, self.t, self.y)</code></pre>
+</details>
+</dd>
 <dt id="earthquakepy.timeseries.TimeSeries.plot"><code class="name flex">
 <span>def <span class="ident">plot</span></span>(<span>self, log=False, **kwargs)</span>
 </code></dt>
@@ -2069,14 +2258,16 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
+    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
     fig, ax = plt.subplots(**kwargs)
-    ax.plot(self.t, self.y, color=&#34;black&#34;, linewidth=0.5)
+    ax.plot(self.t, self.y)
     if hasattr(self, &#34;tunit&#34;):
         ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
     if hasattr(self, &#34;yunit&#34;):
         ax.set_ylabel(str(self.yunit))
     if log:
         ax.set_xscale(&#34;log&#34;)
+    ax.set_xlim(left=0)
     # plt.show()
     return fig</code></pre>
 </details>
@@ -2107,6 +2298,20 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
 <pre><code class="python">def set_dt(self, dt):
     &#34;&#34;&#34;Time step between data points&#34;&#34;&#34;
     self.dt = dt</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.timeseries.TimeSeries.set_duration"><code class="name flex">
+<span>def <span class="ident">set_duration</span></span>(<span>self, duration)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Total duration of the record in seconds</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_duration(self, duration):
+    &#34;&#34;&#34;Total duration of the record in seconds&#34;&#34;&#34;
+    self.duration = duration</code></pre>
 </details>
 </dd>
 <dt id="earthquakepy.timeseries.TimeSeries.set_eqdate"><code class="name flex">
@@ -2195,20 +2400,6 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     self.t = coords</code></pre>
 </details>
 </dd>
-<dt id="earthquakepy.timeseries.TimeSeries.set_time"><code class="name flex">
-<span>def <span class="ident">set_time</span></span>(<span>self, time)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Total duration of the record in seconds</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def set_time(self, time):
-    &#34;&#34;&#34;Total duration of the record in seconds&#34;&#34;&#34;
-    self.time = time</code></pre>
-</details>
-</dd>
 <dt id="earthquakepy.timeseries.TimeSeries.set_tunit"><code class="name flex">
 <span>def <span class="ident">set_tunit</span></span>(<span>self, unit)</span>
 </code></dt>
@@ -2285,8 +2476,10 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_cum_abs_disp" href="#earthquakepy.timeseries.TimeSeries.get_cum_abs_disp">get_cum_abs_disp</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_cum_abs_vel" href="#earthquakepy.timeseries.TimeSeries.get_cum_abs_vel">get_cum_abs_vel</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_destructive_potential" href="#earthquakepy.timeseries.TimeSeries.get_destructive_potential">get_destructive_potential</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_diff" href="#earthquakepy.timeseries.TimeSeries.get_diff">get_diff</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_epsilon" href="#earthquakepy.timeseries.TimeSeries.get_epsilon">get_epsilon</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_fourier_spectrum" href="#earthquakepy.timeseries.TimeSeries.get_fourier_spectrum">get_fourier_spectrum</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_int" href="#earthquakepy.timeseries.TimeSeries.get_int">get_int</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_mean_frequency" href="#earthquakepy.timeseries.TimeSeries.get_mean_frequency">get_mean_frequency</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_mean_period" href="#earthquakepy.timeseries.TimeSeries.get_mean_period">get_mean_period</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_power_spectrum" href="#earthquakepy.timeseries.TimeSeries.get_power_spectrum">get_power_spectrum</a></code></li>
@@ -2295,16 +2488,17 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_sig_duration" href="#earthquakepy.timeseries.TimeSeries.get_sig_duration">get_sig_duration</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_specific_energy" href="#earthquakepy.timeseries.TimeSeries.get_specific_energy">get_specific_energy</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.get_total_arias" href="#earthquakepy.timeseries.TimeSeries.get_total_arias">get_total_arias</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.get_y" href="#earthquakepy.timeseries.TimeSeries.get_y">get_y</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.plot" href="#earthquakepy.timeseries.TimeSeries.plot">plot</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_component" href="#earthquakepy.timeseries.TimeSeries.set_component">set_component</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_dt" href="#earthquakepy.timeseries.TimeSeries.set_dt">set_dt</a></code></li>
+<li><code><a title="earthquakepy.timeseries.TimeSeries.set_duration" href="#earthquakepy.timeseries.TimeSeries.set_duration">set_duration</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_eqdate" href="#earthquakepy.timeseries.TimeSeries.set_eqdate">set_eqdate</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_eqname" href="#earthquakepy.timeseries.TimeSeries.set_eqname">set_eqname</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_filepath" href="#earthquakepy.timeseries.TimeSeries.set_filepath">set_filepath</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_npts" href="#earthquakepy.timeseries.TimeSeries.set_npts">set_npts</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_station" href="#earthquakepy.timeseries.TimeSeries.set_station">set_station</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_t" href="#earthquakepy.timeseries.TimeSeries.set_t">set_t</a></code></li>
-<li><code><a title="earthquakepy.timeseries.TimeSeries.set_time" href="#earthquakepy.timeseries.TimeSeries.set_time">set_time</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_tunit" href="#earthquakepy.timeseries.TimeSeries.set_tunit">set_tunit</a></code></li>
 <li><code><a title="earthquakepy.timeseries.TimeSeries.set_yunit" href="#earthquakepy.timeseries.TimeSeries.set_yunit">set_yunit</a></code></li>
 </ul>
