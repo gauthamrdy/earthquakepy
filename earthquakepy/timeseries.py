@@ -91,9 +91,8 @@ class TimeSeries:
         Matplotlib Figure Object
 
         """
-        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y)
+        ax.plot(self.t, self.y, color = 'k', label = str(self.eqName)+ '_' + str(self.component))
         if hasattr(self, "tunit"):
             ax.set_xlabel("t ({})".format(self.tunit))
         if hasattr(self, "yunit"):
@@ -101,6 +100,7 @@ class TimeSeries:
         if log:
             ax.set_xscale("log")
         ax.set_xlim(left=0)
+        ax.legend()
         # plt.show()
         return fig
 
@@ -470,7 +470,6 @@ class ResponseSpectrum:
         Matplotlib Figure Object
 
         """
-        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
         fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
         ax[0].plot(self.T, self.Sd)
         ax[1].plot(self.T, self.Sv)
@@ -529,7 +528,6 @@ class FourierSpectrum:
         Matplotlib Figure Object
 
         """
-        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
         defaultArgs = {"figsize" : (10,5)}
         kwargs = {**defaultArgs, **kwargs}
         fig = plt.figure(constrained_layout=True, **kwargs)
@@ -630,7 +628,6 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         """
-        mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
         fig, ax = plt.subplots()
         ax.plot(
             self.frequencies,
