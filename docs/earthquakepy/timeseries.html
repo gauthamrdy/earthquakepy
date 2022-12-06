@@ -119,9 +119,8 @@ class TimeSeries:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y)
+        ax.plot(self.t, self.y, color = &#39;k&#39;, label = str(self.eqName)+ &#39;_&#39; + str(self.component))
         if hasattr(self, &#34;tunit&#34;):
             ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
         if hasattr(self, &#34;yunit&#34;):
@@ -129,6 +128,7 @@ class TimeSeries:
         if log:
             ax.set_xscale(&#34;log&#34;)
         ax.set_xlim(left=0)
+        ax.legend()
         # plt.show()
         return fig
 
@@ -498,7 +498,6 @@ class ResponseSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
         ax[0].plot(self.T, self.Sd)
         ax[1].plot(self.T, self.Sv)
@@ -557,7 +556,6 @@ class FourierSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         defaultArgs = {&#34;figsize&#34; : (10,5)}
         kwargs = {**defaultArgs, **kwargs}
         fig = plt.figure(constrained_layout=True, **kwargs)
@@ -658,7 +656,6 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots()
         ax.plot(
             self.frequencies,
@@ -735,7 +732,6 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         defaultArgs = {&#34;figsize&#34; : (10,5)}
         kwargs = {**defaultArgs, **kwargs}
         fig = plt.figure(constrained_layout=True, **kwargs)
@@ -792,7 +788,6 @@ class PowerSpectrum:
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
-    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
     defaultArgs = {&#34;figsize&#34; : (10,5)}
     kwargs = {**defaultArgs, **kwargs}
     fig = plt.figure(constrained_layout=True, **kwargs)
@@ -912,7 +907,6 @@ class PowerSpectrum:
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots()
         ax.plot(
             self.frequencies,
@@ -1014,7 +1008,6 @@ Parameters</p>
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
-    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
     fig, ax = plt.subplots()
     ax.plot(
         self.frequencies,
@@ -1084,7 +1077,6 @@ Parameters</p>
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
         ax[0].plot(self.T, self.Sd)
         ax[1].plot(self.T, self.Sv)
@@ -1133,7 +1125,6 @@ Parameters</p>
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
-    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
     fig, ax = plt.subplots(nrows=1, ncols=3, constrained_layout=True, **kwargs)
     ax[0].plot(self.T, self.Sd)
     ax[1].plot(self.T, self.Sv)
@@ -1259,9 +1250,8 @@ Parameters</p>
         Matplotlib Figure Object
 
         &#34;&#34;&#34;
-        mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y)
+        ax.plot(self.t, self.y, color = &#39;k&#39;, label = str(self.eqName)+ &#39;_&#39; + str(self.component))
         if hasattr(self, &#34;tunit&#34;):
             ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
         if hasattr(self, &#34;yunit&#34;):
@@ -1269,6 +1259,7 @@ Parameters</p>
         if log:
             ax.set_xscale(&#34;log&#34;)
         ax.set_xlim(left=0)
+        ax.legend()
         # plt.show()
         return fig
 
@@ -2258,9 +2249,8 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     Matplotlib Figure Object
 
     &#34;&#34;&#34;
-    mpl.pyplot.style.use(&#39;/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle&#39;)
     fig, ax = plt.subplots(**kwargs)
-    ax.plot(self.t, self.y)
+    ax.plot(self.t, self.y, color = &#39;k&#39;, label = str(self.eqName)+ &#39;_&#39; + str(self.component))
     if hasattr(self, &#34;tunit&#34;):
         ax.set_xlabel(&#34;t ({})&#34;.format(self.tunit))
     if hasattr(self, &#34;yunit&#34;):
@@ -2268,6 +2258,7 @@ Used when acceleration values in 'g' units are to be converted into 'm/sec^2'</d
     if log:
         ax.set_xscale(&#34;log&#34;)
     ax.set_xlim(left=0)
+    ax.legend()
     # plt.show()
     return fig</code></pre>
 </details>
