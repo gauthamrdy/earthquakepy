@@ -154,7 +154,7 @@ class TimeSeries:
         fourier_spectrum = self.get_fourier_spectrum()
         freq = fourier_spectrum.frequencies
         df = freq[1] - freq[0]
-        powerAmp = 2.0 / df * fourier_spectrum.amplitude**2
+        powerAmp = 2.0 * df * np.abs(fourier_spectrum.amplitude)**2
         return PowerSpectrum(freq, powerAmp, N)
 
     def get_mean_period(self):
