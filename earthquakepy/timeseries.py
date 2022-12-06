@@ -93,7 +93,7 @@ class TimeSeries:
         """
         mpl.pyplot.style.use('/home/kaushal/PhDwork/earthquakepy/mpl_stylesheet/style1.mplstyle')
         fig, ax = plt.subplots(**kwargs)
-        ax.plot(self.t, self.y)
+        ax.plot(self.t, self.y, label = str(self.eqName)+ '_' + str(self.component))
         if hasattr(self, "tunit"):
             ax.set_xlabel("t ({})".format(self.tunit))
         if hasattr(self, "yunit"):
