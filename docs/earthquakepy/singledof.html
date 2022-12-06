@@ -84,13 +84,12 @@ class Sdof:
             a += &#34;{:10s}:{}\n&#34;.format(key, val)
         return a
 
-    def sdof_grad(self, t, y, tv, f):
+    def sdof_grad(self, t, y, ts, a):
         m, c, k = self.m, self.c, self.k
-        ft = np.interp(t, tv, f)
 
         A = np.array([[0, 1], [-k / m, -c / m]])
         x = np.array(y)
-        f = np.array([[0.0], [ft / m]])
+        f = np.array([[0.0], [ts.get_y(t) / m]])
         dy = np.matmul(A, x) + f
 
         return dy
@@ -128,7 +127,7 @@ class Sdof:
             &#34;dense_output&#34;: False,
             &#34;events&#34;: None,
             &#34;vectorized&#34;: True,
-            &#34;args&#34;: (ts.t, f),
+            &#34;args&#34;: (ts, 1), # additional element 1 required in tuple due to bug in solve_ivp with only one argument
             &#34;jac&#34;: np.array([[0, 1], [-self.k / self.m, -self.c / self.m]]),
         }
         kwargs = {**defaultArgs, **kwargs}
@@ -160,7 +159,102 @@ class SdofResponseTimeSeries(OdeResult):
         for i in range(len(self.y)):
             ax[i].plot(self.t, self.y[i], linewidth=0.5, color=&#34;black&#34;)
             ax[i].set_xlabel(&#34;Time (s)&#34;)
-        return fig</code></pre>
+        return fig
+
+
+class SdofNL:
+    &#34;&#34;&#34;
+    Class for nonlinear SDOF system.
+    &#34;&#34;&#34;
+    def __init__(self, m=1, dampForce=None, springForce=None):
+        self.m = m
+        self.dampForce = dampForce
+        self.springForce = springForce
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def damping_force(self):
+        return self.dampForce
+
+    def spring_force(self):
+        return self.springForce
+
+
+    def sdof_grad(self, t, y, m, dampForce, springForce, extForce):
+        &#34;&#34;&#34;
+        Defines state space form of nonlinear sdof system
+
+        Parameters
+        ----------
+        m: (scalar) mass
+        dampForce: (function or timeseries object) Damping force
+        springForce: (function or timeseries object) Spring force
+        extForce: (function or timeseries object) external force
+        &#34;&#34;&#34;
+        dy = np.zeros(2)
+        if callable(dampForce):
+            dampF = dampForce(t, y[0], y[1])
+        else:
+            dampF = dampForce.get_y(t)
+
+        if callable(springForce):
+            sprF = springForce(t, y[0], y[1])
+        else:
+            sprF = springForce.get_y(t)
+
+        if callable(extForce):
+            extF = extForce(t)
+        else:
+            extF = extForce.get_y(t)
+        dy[0] = y[1]
+        dy[1] = 1/m*(extF - dampF - sprF)
+        return dy
+
+    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        &#34;&#34;&#34;
+        Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
+
+        Parameters
+        ----------
+        ts: (timeseries object) timeseries defining loading/base excitation
+
+        tsType: (string) &#34;baseExcitation&#34; or &#34;force&#34;
+
+        **kwargs: arguments acceptable to scipy solve_ivp module
+
+        Returns
+        -------
+        SdofResponseTimeSeries object
+
+        By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+        &#34;&#34;&#34;
+        if tsType == &#34;baseExcitation&#34;:
+            f = -self.m * ts.y
+        elif tsType == &#34;force&#34;:
+            f = ts.y
+        else:
+            raise Exception(&#34;Incorrect timeseries type given&#34;)
+
+        defaultArgs = {
+            &#34;t_span&#34;: (ts.t[0], ts.t[-1] * 2),
+            &#34;y0&#34;: [0.0, 0.0],
+            &#34;method&#34;: &#34;BDF&#34;,
+            &#34;t_eval&#34;: None,
+            &#34;dense_output&#34;: False,
+            &#34;events&#34;: None,
+            &#34;vectorized&#34;: False,
+            &#34;args&#34;: (self.m, self.dampForce, self.springForce, ts),
+        }
+        kwargs = {**defaultArgs, **kwargs}
+
+        # r = solve_ivp(self.sdof_grad, **kwargs)
+        r = solve_ivp(self.sdof_grad, **kwargs)
+        acc = 1/self.m*(ts.get_y(r.t) - self.dampForce(r.t, r.y[0], r.y[1]) - self.springForce(r.t, r.y[0], r.y[1]))
+        return SdofResponseTimeSeries(r, acc)</code></pre>
 </details>
 </section>
 <section>
@@ -251,13 +345,12 @@ You should provide at least wn or T or (m and k).</p>
             a += &#34;{:10s}:{}\n&#34;.format(key, val)
         return a
 
-    def sdof_grad(self, t, y, tv, f):
+    def sdof_grad(self, t, y, ts, a):
         m, c, k = self.m, self.c, self.k
-        ft = np.interp(t, tv, f)
 
         A = np.array([[0, 1], [-k / m, -c / m]])
         x = np.array(y)
-        f = np.array([[0.0], [ft / m]])
+        f = np.array([[0.0], [ts.get_y(t) / m]])
         dy = np.matmul(A, x) + f
 
         return dy
@@ -295,7 +388,7 @@ You should provide at least wn or T or (m and k).</p>
             &#34;dense_output&#34;: False,
             &#34;events&#34;: None,
             &#34;vectorized&#34;: True,
-            &#34;args&#34;: (ts.t, f),
+            &#34;args&#34;: (ts, 1), # additional element 1 required in tuple due to bug in solve_ivp with only one argument
             &#34;jac&#34;: np.array([[0, 1], [-self.k / self.m, -self.c / self.m]]),
         }
         kwargs = {**defaultArgs, **kwargs}
@@ -366,7 +459,7 @@ You should provide at least wn or T or (m and k).</p>
         &#34;dense_output&#34;: False,
         &#34;events&#34;: None,
         &#34;vectorized&#34;: True,
-        &#34;args&#34;: (ts.t, f),
+        &#34;args&#34;: (ts, 1), # additional element 1 required in tuple due to bug in solve_ivp with only one argument
         &#34;jac&#34;: np.array([[0, 1], [-self.k / self.m, -self.c / self.m]]),
     }
     kwargs = {**defaultArgs, **kwargs}
@@ -380,7 +473,7 @@ You should provide at least wn or T or (m and k).</p>
 </details>
 </dd>
 <dt id="earthquakepy.singledof.Sdof.sdof_grad"><code class="name flex">
-<span>def <span class="ident">sdof_grad</span></span>(<span>self, t, y, tv, f)</span>
+<span>def <span class="ident">sdof_grad</span></span>(<span>self, t, y, ts, a)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -388,16 +481,267 @@ You should provide at least wn or T or (m and k).</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def sdof_grad(self, t, y, tv, f):
+<pre><code class="python">def sdof_grad(self, t, y, ts, a):
     m, c, k = self.m, self.c, self.k
-    ft = np.interp(t, tv, f)
 
     A = np.array([[0, 1], [-k / m, -c / m]])
     x = np.array(y)
-    f = np.array([[0.0], [ft / m]])
+    f = np.array([[0.0], [ts.get_y(t) / m]])
     dy = np.matmul(A, x) + f
 
     return dy</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="earthquakepy.singledof.SdofNL"><code class="flex name class">
+<span>class <span class="ident">SdofNL</span></span>
+<span>(</span><span>m=1, dampForce=None, springForce=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class for nonlinear SDOF system.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SdofNL:
+    &#34;&#34;&#34;
+    Class for nonlinear SDOF system.
+    &#34;&#34;&#34;
+    def __init__(self, m=1, dampForce=None, springForce=None):
+        self.m = m
+        self.dampForce = dampForce
+        self.springForce = springForce
+
+    def __repr__(self):
+        a = &#34;&#34;
+        for key, val in vars(self).items():
+            a += &#34;{:10s}:{}\n&#34;.format(key, val)
+        return a
+
+    def damping_force(self):
+        return self.dampForce
+
+    def spring_force(self):
+        return self.springForce
+
+
+    def sdof_grad(self, t, y, m, dampForce, springForce, extForce):
+        &#34;&#34;&#34;
+        Defines state space form of nonlinear sdof system
+
+        Parameters
+        ----------
+        m: (scalar) mass
+        dampForce: (function or timeseries object) Damping force
+        springForce: (function or timeseries object) Spring force
+        extForce: (function or timeseries object) external force
+        &#34;&#34;&#34;
+        dy = np.zeros(2)
+        if callable(dampForce):
+            dampF = dampForce(t, y[0], y[1])
+        else:
+            dampF = dampForce.get_y(t)
+
+        if callable(springForce):
+            sprF = springForce(t, y[0], y[1])
+        else:
+            sprF = springForce.get_y(t)
+
+        if callable(extForce):
+            extF = extForce(t)
+        else:
+            extF = extForce.get_y(t)
+        dy[0] = y[1]
+        dy[1] = 1/m*(extF - dampF - sprF)
+        return dy
+
+    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        &#34;&#34;&#34;
+        Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
+
+        Parameters
+        ----------
+        ts: (timeseries object) timeseries defining loading/base excitation
+
+        tsType: (string) &#34;baseExcitation&#34; or &#34;force&#34;
+
+        **kwargs: arguments acceptable to scipy solve_ivp module
+
+        Returns
+        -------
+        SdofResponseTimeSeries object
+
+        By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+        &#34;&#34;&#34;
+        if tsType == &#34;baseExcitation&#34;:
+            f = -self.m * ts.y
+        elif tsType == &#34;force&#34;:
+            f = ts.y
+        else:
+            raise Exception(&#34;Incorrect timeseries type given&#34;)
+
+        defaultArgs = {
+            &#34;t_span&#34;: (ts.t[0], ts.t[-1] * 2),
+            &#34;y0&#34;: [0.0, 0.0],
+            &#34;method&#34;: &#34;BDF&#34;,
+            &#34;t_eval&#34;: None,
+            &#34;dense_output&#34;: False,
+            &#34;events&#34;: None,
+            &#34;vectorized&#34;: False,
+            &#34;args&#34;: (self.m, self.dampForce, self.springForce, ts),
+        }
+        kwargs = {**defaultArgs, **kwargs}
+
+        # r = solve_ivp(self.sdof_grad, **kwargs)
+        r = solve_ivp(self.sdof_grad, **kwargs)
+        acc = 1/self.m*(ts.get_y(r.t) - self.dampForce(r.t, r.y[0], r.y[1]) - self.springForce(r.t, r.y[0], r.y[1]))
+        return SdofResponseTimeSeries(r, acc)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="earthquakepy.singledof.SdofNL.damping_force"><code class="name flex">
+<span>def <span class="ident">damping_force</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def damping_force(self):
+    return self.dampForce</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.singledof.SdofNL.get_response"><code class="name flex">
+<span>def <span class="ident">get_response</span></span>(<span>self, ts, tsType='baseExcitation', **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>ts</code></strong> :&ensp;<code>(timeseries object) timeseries defining loading/base excitation</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>tsType</code></strong> :&ensp;<code>(string) "baseExcitation"</code> or <code>"force"</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>**kwargs</code></strong> :&ensp;<code>arguments acceptable to scipy solve_ivp module</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="earthquakepy.singledof.SdofResponseTimeSeries" href="#earthquakepy.singledof.SdofResponseTimeSeries">SdofResponseTimeSeries</a> object</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+    &#34;&#34;&#34;
+    Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
+
+    Parameters
+    ----------
+    ts: (timeseries object) timeseries defining loading/base excitation
+
+    tsType: (string) &#34;baseExcitation&#34; or &#34;force&#34;
+
+    **kwargs: arguments acceptable to scipy solve_ivp module
+
+    Returns
+    -------
+    SdofResponseTimeSeries object
+
+    By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+    &#34;&#34;&#34;
+    if tsType == &#34;baseExcitation&#34;:
+        f = -self.m * ts.y
+    elif tsType == &#34;force&#34;:
+        f = ts.y
+    else:
+        raise Exception(&#34;Incorrect timeseries type given&#34;)
+
+    defaultArgs = {
+        &#34;t_span&#34;: (ts.t[0], ts.t[-1] * 2),
+        &#34;y0&#34;: [0.0, 0.0],
+        &#34;method&#34;: &#34;BDF&#34;,
+        &#34;t_eval&#34;: None,
+        &#34;dense_output&#34;: False,
+        &#34;events&#34;: None,
+        &#34;vectorized&#34;: False,
+        &#34;args&#34;: (self.m, self.dampForce, self.springForce, ts),
+    }
+    kwargs = {**defaultArgs, **kwargs}
+
+    # r = solve_ivp(self.sdof_grad, **kwargs)
+    r = solve_ivp(self.sdof_grad, **kwargs)
+    acc = 1/self.m*(ts.get_y(r.t) - self.dampForce(r.t, r.y[0], r.y[1]) - self.springForce(r.t, r.y[0], r.y[1]))
+    return SdofResponseTimeSeries(r, acc)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.singledof.SdofNL.sdof_grad"><code class="name flex">
+<span>def <span class="ident">sdof_grad</span></span>(<span>self, t, y, m, dampForce, springForce, extForce)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines state space form of nonlinear sdof system</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>m</code></strong> :&ensp;<code>(scalar) mass</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>dampForce</code></strong> :&ensp;<code>(function</code> or <code>timeseries object) Damping force</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>springForce</code></strong> :&ensp;<code>(function</code> or <code>timeseries object) Spring force</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>extForce</code></strong> :&ensp;<code>(function</code> or <code>timeseries object) external force</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sdof_grad(self, t, y, m, dampForce, springForce, extForce):
+    &#34;&#34;&#34;
+    Defines state space form of nonlinear sdof system
+
+    Parameters
+    ----------
+    m: (scalar) mass
+    dampForce: (function or timeseries object) Damping force
+    springForce: (function or timeseries object) Spring force
+    extForce: (function or timeseries object) external force
+    &#34;&#34;&#34;
+    dy = np.zeros(2)
+    if callable(dampForce):
+        dampF = dampForce(t, y[0], y[1])
+    else:
+        dampF = dampForce.get_y(t)
+
+    if callable(springForce):
+        sprF = springForce(t, y[0], y[1])
+    else:
+        sprF = springForce.get_y(t)
+
+    if callable(extForce):
+        extF = extForce(t)
+    else:
+        extF = extForce.get_y(t)
+    dy[0] = y[1]
+    dy[1] = 1/m*(extF - dampF - sprF)
+    return dy</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.singledof.SdofNL.spring_force"><code class="name flex">
+<span>def <span class="ident">spring_force</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def spring_force(self):
+    return self.springForce</code></pre>
 </details>
 </dd>
 </dl>
@@ -436,7 +780,7 @@ You should provide at least wn or T or (m and k).</p>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>scipy.integrate._ivp.ivp.OdeResult</li>
-<li>scipy.optimize._optimize.OptimizeResult</li>
+<li>scipy.optimize.optimize.OptimizeResult</li>
 <li>builtins.dict</li>
 </ul>
 <h3>Methods</h3>
@@ -485,6 +829,15 @@ You should provide at least wn or T or (m and k).</p>
 <ul class="">
 <li><code><a title="earthquakepy.singledof.Sdof.get_response" href="#earthquakepy.singledof.Sdof.get_response">get_response</a></code></li>
 <li><code><a title="earthquakepy.singledof.Sdof.sdof_grad" href="#earthquakepy.singledof.Sdof.sdof_grad">sdof_grad</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="earthquakepy.singledof.SdofNL" href="#earthquakepy.singledof.SdofNL">SdofNL</a></code></h4>
+<ul class="">
+<li><code><a title="earthquakepy.singledof.SdofNL.damping_force" href="#earthquakepy.singledof.SdofNL.damping_force">damping_force</a></code></li>
+<li><code><a title="earthquakepy.singledof.SdofNL.get_response" href="#earthquakepy.singledof.SdofNL.get_response">get_response</a></code></li>
+<li><code><a title="earthquakepy.singledof.SdofNL.sdof_grad" href="#earthquakepy.singledof.SdofNL.sdof_grad">sdof_grad</a></code></li>
+<li><code><a title="earthquakepy.singledof.SdofNL.spring_force" href="#earthquakepy.singledof.SdofNL.spring_force">spring_force</a></code></li>
 </ul>
 </li>
 <li>
