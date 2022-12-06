@@ -31,13 +31,14 @@ import numpy as np
 from earthquakepy import timeseries
 
 
-def read_peer_nga_file(filepath):
+def read_peer_nga_file(filepath, scale_factor=1):
     &#34;&#34;&#34;
-    Reads PEER NGA record file and generates a timeseries object.
+    Read PEER NGA record file and generate a timeseries object.
 
     Parameters
     ----------
     filepath (string): PEER NGA file path
+    scale_factor: Scaling factor, default = 1
 
     Returns
     -------
@@ -52,13 +53,13 @@ def read_peer_nga_file(filepath):
         if n == 0:
             pass
         elif n == 1:
-            eq, eqDate, station, component = line.strip(&#34;\n&#34;).split(&#34;,&#34;)
+            eq, eqDate, station, component = [l.strip() for l in line.strip(&#34;\n&#34;).split(&#34;,&#34;)]
         elif n == 2:
-            yunit = line
+            yunit = line.strip()
         elif n == 3:
             npts = int(re.match(r&#34;.*= *([0-9]*),.*&#34;, line)[1])
             dt = float(re.match(r&#34;.*= *(0?\.[0-9]*) SEC&#34;, line)[1])
-            time = dt * npts
+            duration = dt * npts
             y = np.zeros(int(npts))
         else:
             elms = line.strip(&#34;\n&#34;).split()
@@ -67,7 +68,7 @@ def read_peer_nga_file(filepath):
             j = i + nelms
             y[i:j] = [float(e) for e in elms]
 
-    ts = timeseries.TimeSeries(dt, y)
+    ts = timeseries.TimeSeries(dt, y*scale_factor)
     ts.set_tunit(&#34;s&#34;)
     ts.set_yunit(yunit)
     ts.set_eqname(eq)
@@ -76,14 +77,135 @@ def read_peer_nga_file(filepath):
     ts.set_component(component)
     ts.set_npts(npts)
     ts.set_dt(dt)
-    ts.set_time(time)
+    ts.set_duration(duration)
     ts.set_filepath(filepath)
     return ts
 
 
-def read_raw_file(filename, **kwargs):
+def read_data_between_lines(text, start=0, end=None):
     &#34;&#34;&#34;
-    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
+    Read data between line numbers given by start and end.
+
+    Parameters
+    ----------
+    text (list of strings): data read from file using readlines()
+    start (int): line number (0 indexed) to start reading the data
+    end (int): line number (0 indexed) to end reading the data (inclusive)
+
+    returns
+    -------
+    1D numpy array of values
+    &#34;&#34;&#34;
+    if end is None:
+        end = len(text)
+
+    v = []
+    for i in range(start, end):
+        line = text[i].strip().split(&#34; &#34;)
+        for j in range(len(line)):
+            v.append(float(line[j]))
+    return np.array(v)
+
+
+def read_cosmos_vdc_file(filename, **kwargs):
+    &#34;&#34;&#34;
+    Read a cosmos db virtual data file and return three timeseries objects corresponding to acceleration, velocity and displacement record, respectively.
+
+    Parameters
+    ----------
+    filename (string): name of the file to read
+
+    Returns
+    -------
+    three Timeseries objects
+    &#34;&#34;&#34;
+    with open(filename, &#34;r&#34;) as f:
+        text = f.readlines()
+
+    l1 = text[0].strip()
+    eqName = l1.split(&#34;,&#34;)[0]
+    eqDate = &#34;,&#34;.join(l1.split(&#34;,&#34;)[1:]).strip()
+
+    l2 = text[1].strip()
+    station = re.search(&#34;\s*([A-Za-z0-9]*)\s*&#34;, l2)[1]
+    latloncomp = re.search(&#34;Lat.*Lon([0-9 \-]*[NS])\s*([0-9 \-]*[EW])\s*Comp:\s*(.*)\s*&#34;, l2)
+    lat = latloncomp[1]
+    lon = latloncomp[2]
+    comp = latloncomp[3]
+
+    l3 = text[2].strip()
+    l4 = text[3].strip()
+    meta = l3 + &#34;\n&#34; + &#34;            &#34; + l4
+
+    l6 = text[5].strip()
+    nptsdt = re.search(&#34;\s*(\d*)\s*.*at\s*([0-9.]*)\s*sec&#34;, l6)
+    npts = int(nptsdt[1])
+    dt = float(nptsdt[2])
+
+    ptsperline = len(text[6].strip().split(&#34; &#34;))
+    nlines = int(np.ceil(npts / (ptsperline+0.001)))
+
+    acc_start = 6
+    acc_end = acc_start + nlines
+
+    vel_start = acc_end + 2
+    vel_end = vel_start + nlines
+
+    disp_start = vel_end + 2
+    disp_end = disp_start + nlines
+
+    aunit = re.search(&#34;.*\(in\s*(.*)\)\s*.*&#34;, text[acc_start-1])[1]
+    vunit = re.search(&#34;.*\(in\s*(.*)\)\s*.*&#34;, text[vel_start-1])[1]
+    dunit = re.search(&#34;.*\(in\s*(.*)\)\s*.*&#34;, text[disp_start-1])[1]
+
+    acc = read_data_between_lines(text, start=acc_start, end=acc_end)
+    vel = read_data_between_lines(text, start=vel_start, end=vel_end)
+    disp = read_data_between_lines(text, start=disp_start, end=disp_end)
+
+    ats = timeseries.TimeSeries(dt, acc)
+    ats.component = comp
+    ats.dt = dt
+    ats.duration = ats.t[-1]
+    ats.eqDate = eqDate
+    ats.eqName = eqName
+    ats.lat = lat
+    ats.lon = lon
+    ats.station = station
+    ats.yunit = aunit
+    ats.filepath = filename
+    ats.meta = meta
+
+    vts = timeseries.TimeSeries(dt, vel)
+    vts.component = comp
+    vts.dt = dt
+    vts.duration = vts.t[-1]
+    vts.eqDate = eqDate
+    vts.eqName = eqName
+    vts.lat = lat
+    vts.lon = lon
+    vts.station = station
+    vts.yunit = vunit
+    vts.filepath = filename
+    vts.meta = meta
+
+    dts = timeseries.TimeSeries(dt, disp)
+    dts.component = comp
+    dts.dt = dt
+    dts.duration = dts.t[-1]
+    dts.eqDate = eqDate
+    dts.eqName = eqName
+    dts.lat = lat
+    dts.lon = lon
+    dts.station = station
+    dts.yunit = dunit
+    dts.filepath = filename
+    dts.meta = meta
+    return ats, vts, dts
+
+
+def read_raw_timeseries_file(filename, **kwargs):
+    &#34;&#34;&#34;
+    Read a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
 
     Parameters
     ----------
@@ -105,13 +227,172 @@ def read_raw_file(filename, **kwargs):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="earthquakepy.tsReaders.read_peer_nga_file"><code class="name flex">
-<span>def <span class="ident">read_peer_nga_file</span></span>(<span>filepath)</span>
+<dt id="earthquakepy.tsReaders.read_cosmos_vdc_file"><code class="name flex">
+<span>def <span class="ident">read_cosmos_vdc_file</span></span>(<span>filename, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reads PEER NGA record file and generates a timeseries object.</p>
+<div class="desc"><p>Read a cosmos db virtual data file and return three timeseries objects corresponding to acceleration, velocity and displacement record, respectively.</p>
 <h2 id="parameters">Parameters</h2>
-<p>filepath (string): PEER NGA file path</p>
+<p>filename (string): name of the file to read</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>three Timeseries objects</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_cosmos_vdc_file(filename, **kwargs):
+    &#34;&#34;&#34;
+    Read a cosmos db virtual data file and return three timeseries objects corresponding to acceleration, velocity and displacement record, respectively.
+
+    Parameters
+    ----------
+    filename (string): name of the file to read
+
+    Returns
+    -------
+    three Timeseries objects
+    &#34;&#34;&#34;
+    with open(filename, &#34;r&#34;) as f:
+        text = f.readlines()
+
+    l1 = text[0].strip()
+    eqName = l1.split(&#34;,&#34;)[0]
+    eqDate = &#34;,&#34;.join(l1.split(&#34;,&#34;)[1:]).strip()
+
+    l2 = text[1].strip()
+    station = re.search(&#34;\s*([A-Za-z0-9]*)\s*&#34;, l2)[1]
+    latloncomp = re.search(&#34;Lat.*Lon([0-9 \-]*[NS])\s*([0-9 \-]*[EW])\s*Comp:\s*(.*)\s*&#34;, l2)
+    lat = latloncomp[1]
+    lon = latloncomp[2]
+    comp = latloncomp[3]
+
+    l3 = text[2].strip()
+    l4 = text[3].strip()
+    meta = l3 + &#34;\n&#34; + &#34;            &#34; + l4
+
+    l6 = text[5].strip()
+    nptsdt = re.search(&#34;\s*(\d*)\s*.*at\s*([0-9.]*)\s*sec&#34;, l6)
+    npts = int(nptsdt[1])
+    dt = float(nptsdt[2])
+
+    ptsperline = len(text[6].strip().split(&#34; &#34;))
+    nlines = int(np.ceil(npts / (ptsperline+0.001)))
+
+    acc_start = 6
+    acc_end = acc_start + nlines
+
+    vel_start = acc_end + 2
+    vel_end = vel_start + nlines
+
+    disp_start = vel_end + 2
+    disp_end = disp_start + nlines
+
+    aunit = re.search(&#34;.*\(in\s*(.*)\)\s*.*&#34;, text[acc_start-1])[1]
+    vunit = re.search(&#34;.*\(in\s*(.*)\)\s*.*&#34;, text[vel_start-1])[1]
+    dunit = re.search(&#34;.*\(in\s*(.*)\)\s*.*&#34;, text[disp_start-1])[1]
+
+    acc = read_data_between_lines(text, start=acc_start, end=acc_end)
+    vel = read_data_between_lines(text, start=vel_start, end=vel_end)
+    disp = read_data_between_lines(text, start=disp_start, end=disp_end)
+
+    ats = timeseries.TimeSeries(dt, acc)
+    ats.component = comp
+    ats.dt = dt
+    ats.duration = ats.t[-1]
+    ats.eqDate = eqDate
+    ats.eqName = eqName
+    ats.lat = lat
+    ats.lon = lon
+    ats.station = station
+    ats.yunit = aunit
+    ats.filepath = filename
+    ats.meta = meta
+
+    vts = timeseries.TimeSeries(dt, vel)
+    vts.component = comp
+    vts.dt = dt
+    vts.duration = vts.t[-1]
+    vts.eqDate = eqDate
+    vts.eqName = eqName
+    vts.lat = lat
+    vts.lon = lon
+    vts.station = station
+    vts.yunit = vunit
+    vts.filepath = filename
+    vts.meta = meta
+
+    dts = timeseries.TimeSeries(dt, disp)
+    dts.component = comp
+    dts.dt = dt
+    dts.duration = dts.t[-1]
+    dts.eqDate = eqDate
+    dts.eqName = eqName
+    dts.lat = lat
+    dts.lon = lon
+    dts.station = station
+    dts.yunit = dunit
+    dts.filepath = filename
+    dts.meta = meta
+    return ats, vts, dts</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.tsReaders.read_data_between_lines"><code class="name flex">
+<span>def <span class="ident">read_data_between_lines</span></span>(<span>text, start=0, end=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Read data between line numbers given by start and end.</p>
+<h2 id="parameters">Parameters</h2>
+<p>text (list of strings): data read from file using readlines()
+start (int): line number (0 indexed) to start reading the data
+end (int): line number (0 indexed) to end reading the data (inclusive)</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>1D numpy array</code> of <code>values</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_data_between_lines(text, start=0, end=None):
+    &#34;&#34;&#34;
+    Read data between line numbers given by start and end.
+
+    Parameters
+    ----------
+    text (list of strings): data read from file using readlines()
+    start (int): line number (0 indexed) to start reading the data
+    end (int): line number (0 indexed) to end reading the data (inclusive)
+
+    returns
+    -------
+    1D numpy array of values
+    &#34;&#34;&#34;
+    if end is None:
+        end = len(text)
+
+    v = []
+    for i in range(start, end):
+        line = text[i].strip().split(&#34; &#34;)
+        for j in range(len(line)):
+            v.append(float(line[j]))
+    return np.array(v)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.tsReaders.read_peer_nga_file"><code class="name flex">
+<span>def <span class="ident">read_peer_nga_file</span></span>(<span>filepath, scale_factor=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Read PEER NGA record file and generate a timeseries object.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt>filepath (string): PEER NGA file path</dt>
+<dt><strong><code>scale_factor</code></strong> :&ensp;<code>Scaling factor</code>, default <code>= 1</code></dt>
+<dd>&nbsp;</dd>
+</dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>TimeSeries object</code></dt>
@@ -121,13 +402,14 @@ def read_raw_file(filename, **kwargs):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def read_peer_nga_file(filepath):
+<pre><code class="python">def read_peer_nga_file(filepath, scale_factor=1):
     &#34;&#34;&#34;
-    Reads PEER NGA record file and generates a timeseries object.
+    Read PEER NGA record file and generate a timeseries object.
 
     Parameters
     ----------
     filepath (string): PEER NGA file path
+    scale_factor: Scaling factor, default = 1
 
     Returns
     -------
@@ -142,13 +424,13 @@ def read_raw_file(filename, **kwargs):
         if n == 0:
             pass
         elif n == 1:
-            eq, eqDate, station, component = line.strip(&#34;\n&#34;).split(&#34;,&#34;)
+            eq, eqDate, station, component = [l.strip() for l in line.strip(&#34;\n&#34;).split(&#34;,&#34;)]
         elif n == 2:
-            yunit = line
+            yunit = line.strip()
         elif n == 3:
             npts = int(re.match(r&#34;.*= *([0-9]*),.*&#34;, line)[1])
             dt = float(re.match(r&#34;.*= *(0?\.[0-9]*) SEC&#34;, line)[1])
-            time = dt * npts
+            duration = dt * npts
             y = np.zeros(int(npts))
         else:
             elms = line.strip(&#34;\n&#34;).split()
@@ -157,7 +439,7 @@ def read_raw_file(filename, **kwargs):
             j = i + nelms
             y[i:j] = [float(e) for e in elms]
 
-    ts = timeseries.TimeSeries(dt, y)
+    ts = timeseries.TimeSeries(dt, y*scale_factor)
     ts.set_tunit(&#34;s&#34;)
     ts.set_yunit(yunit)
     ts.set_eqname(eq)
@@ -166,16 +448,16 @@ def read_raw_file(filename, **kwargs):
     ts.set_component(component)
     ts.set_npts(npts)
     ts.set_dt(dt)
-    ts.set_time(time)
+    ts.set_duration(duration)
     ts.set_filepath(filepath)
     return ts</code></pre>
 </details>
 </dd>
-<dt id="earthquakepy.tsReaders.read_raw_file"><code class="name flex">
-<span>def <span class="ident">read_raw_file</span></span>(<span>filename, **kwargs)</span>
+<dt id="earthquakepy.tsReaders.read_raw_timeseries_file"><code class="name flex">
+<span>def <span class="ident">read_raw_timeseries_file</span></span>(<span>filename, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().</p>
+<div class="desc"><p>Read a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>filename</code></strong> :&ensp;<code>(str) filename</code> of <code>the file containing raw data</code></dt>
@@ -190,9 +472,9 @@ def read_raw_file(filename, **kwargs):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def read_raw_file(filename, **kwargs):
+<pre><code class="python">def read_raw_timeseries_file(filename, **kwargs):
     &#34;&#34;&#34;
-    Reads a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
+    Read a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
 
     Parameters
     ----------
@@ -225,8 +507,10 @@ def read_raw_file(filename, **kwargs):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="earthquakepy.tsReaders.read_cosmos_vdc_file" href="#earthquakepy.tsReaders.read_cosmos_vdc_file">read_cosmos_vdc_file</a></code></li>
+<li><code><a title="earthquakepy.tsReaders.read_data_between_lines" href="#earthquakepy.tsReaders.read_data_between_lines">read_data_between_lines</a></code></li>
 <li><code><a title="earthquakepy.tsReaders.read_peer_nga_file" href="#earthquakepy.tsReaders.read_peer_nga_file">read_peer_nga_file</a></code></li>
-<li><code><a title="earthquakepy.tsReaders.read_raw_file" href="#earthquakepy.tsReaders.read_raw_file">read_raw_file</a></code></li>
+<li><code><a title="earthquakepy.tsReaders.read_raw_timeseries_file" href="#earthquakepy.tsReaders.read_raw_timeseries_file">read_raw_timeseries_file</a></code></li>
 </ul>
 </li>
 </ul>
