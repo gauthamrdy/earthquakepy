@@ -54,7 +54,7 @@ def read_peer_nga_file(filepath, scale_factor=1):
     return ts
 
 
-def read_data_between_lines(text, start=0, end=None):
+def read_data_between_lines(text, start=0, end=None, **kwargs):
     """
     Read data between line numbers given by start and end.
 
@@ -68,29 +68,35 @@ def read_data_between_lines(text, start=0, end=None):
     -------
     1D numpy array of values
     """
+    defaultArgs = {}
+    kwargs = {**defaultArgs, **kwargs}
     if end is None:
         end = len(text)
 
     v = []
     for i in range(start, end):
-        line = text[i].strip().split(" ")
+        line = re.split(r"\s+", text[i].strip())
+        # line = text[i].strip().split(" ")
         for j in range(len(line)):
             v.append(float(line[j]))
     return np.array(v)
 
 
-def read_cosmos_vdc_file(filename, **kwargs):
+def read_cosmos_vdc_file(filename, scale_factor=[1.0, 1.0, 1.0], **kwargs):
     """
     Read a cosmos db virtual data file and return three timeseries objects corresponding to acceleration, velocity and displacement record, respectively.
 
     Parameters
     ----------
     filename (string): name of the file to read
+    scale_factor (list of 3 floats): scale factors to be multiplied to acc, vel and disp timeseries, respectively
 
     Returns
     -------
     three Timeseries objects
     """
+    defaultArgs = {}
+    kwargs = {**defaultArgs, **kwargs}
     with open(filename, "r") as f:
         text = f.readlines()
 
@@ -134,7 +140,7 @@ def read_cosmos_vdc_file(filename, **kwargs):
     vel = read_data_between_lines(text, start=vel_start, end=vel_end)
     disp = read_data_between_lines(text, start=disp_start, end=disp_end)
 
-    ats = timeseries.TimeSeries(dt, acc)
+    ats = timeseries.TimeSeries(dt, acc*scale_factor[0])
     ats.component = comp
     ats.dt = dt
     ats.duration = ats.t[-1]
@@ -147,7 +153,7 @@ def read_cosmos_vdc_file(filename, **kwargs):
     ats.filepath = filename
     ats.meta = meta
 
-    vts = timeseries.TimeSeries(dt, vel)
+    vts = timeseries.TimeSeries(dt, vel*scale_factor[1])
     vts.component = comp
     vts.dt = dt
     vts.duration = vts.t[-1]
@@ -160,7 +166,7 @@ def read_cosmos_vdc_file(filename, **kwargs):
     vts.filepath = filename
     vts.meta = meta
 
-    dts = timeseries.TimeSeries(dt, disp)
+    dts = timeseries.TimeSeries(dt, disp*scale_factor[2])
     dts.component = comp
     dts.dt = dt
     dts.duration = dts.t[-1]
@@ -175,7 +181,7 @@ def read_cosmos_vdc_file(filename, **kwargs):
     return ats, vts, dts
 
 
-def read_raw_timeseries_file(filename, **kwargs):
+def read_raw_timeseries_file(filename, scale_factor=1.0, **kwargs):
     """
     Read a raw file readable by numpy.genfromtxt(). The first column is assumed as time and second column as ordinates. Accepts all arguments supported by genfromtxt().
 
@@ -187,6 +193,38 @@ def read_raw_timeseries_file(filename, **kwargs):
     -------
     Timeseries object
     """
+    defaultArgs = {}
+    kwargs = {**defaultArgs, **kwargs}
     data = np.genfromtxt(filename, **kwargs)
-    ts = timeseries.TimeSeries(data[:, 0], data[:, 1])
+    ts = timeseries.TimeSeries(data[:, 0], data[:, 1] * scale_factor)
+    ts.filepath = filename
     return ts
+
+
+def read_custom_timeseries_file(filename, dt=1.0, scale_factor=1.0, **kwargs):
+    r"""
+    Read any other file with unknown format where only the ordinates are provided with a specified dt.
+
+    This can be used in cases where the file has data as below:
+    #####
+    Meta1 : Some info Meta2: Other info
+    Meta 3: Some info
+    dt: 0.02
+    <--snip-->
+    val1 val2 val3 val4
+    val5 val6 val7 val8
+    <--snip-->
+    valn-3 valn-2 valn-1
+    ######
+    The user should provide dt, otherwise assumed as 1.0
+    """
+    defaultArgs = {"start": 0, "end": None}
+    kwargs = {**defaultArgs, **kwargs}
+    with open(filename, "r") as f:
+        text = f.readlines()
+
+    data = read_data_between_lines(text, start=kwargs["start"], end=kwargs["end"]) * scale_factor
+    ts = timeseries.TimeSeries(float(dt), data)
+    ts.filepath = filename
+    return ts
+    

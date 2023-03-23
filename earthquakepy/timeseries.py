@@ -29,8 +29,8 @@ class TimeSeries:
             t = np.arange(t, len(y) * t + 0.1 * t, t)
         self.t = t
         self.y = y
-        self.npts = len(t)
-        self.dt = t[1] - t[0]
+        self.npts = len(self.t)
+        self.dt = self.t[1] - self.t[0]
         self.component = " "
         self.duration = " "
         self.eqDate = " "
