@@ -118,7 +118,7 @@ class TimeSeries:
         """Perform 1D interpolation."""
         return np.interp(t, self.t, self.y)
 
-    def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
+    def get_response_spectra_frequency_domain(self, T=np.arange(0.01, 100.001, 0.01), xi=0.05):
         """
         Calculate linear elastic response spectra associated with the timeseries.
 
@@ -137,14 +137,39 @@ class TimeSeries:
         Sa = np.empty(specLength)
         for i in range(specLength):
             s = Sdof(T=T[i], xi=xi)
-            r = s.get_response(self, tsType="baseExcitation")
-            D = np.max(np.abs(r.y[0]))
-            V = np.max(np.abs(r.y[1]))
-            A = np.max(np.abs(r.acc))
-            Sd[i] = D
-            Sv[i] = V
-            Sa[i] = A
-        return ResponseSpectrum(T, Sd, Sv, Sa)
+            t, d, v, a = s.get_response_frequency_domain(self, tsType="baseExcitation")
+            Sd[i] = np.max(np.abs(d))
+            Sv[i] = np.max(np.abs(v))
+            Sa[i] = np.max(np.abs(a))
+        return ResponseSpectra(T, Sd, Sv, Sa)
+
+    def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
+        """
+        Calculate linear elastic response spectra associated with the timeseries.
+
+        Parameters
+        ----------
+        T: (1D array of floats) Periods corresponding to spectrum width
+        xi: (float) damping ratio
+
+        Returns
+        -------
+        ResponseSpectrum object with T, Sd, Sv, Sa as attributes.
+        """
+        # specLength = len(T)
+        # Sd = np.empty(specLength)
+        # Sv = np.empty(specLength)
+        # Sa = np.empty(specLength)
+        # for i in range(specLength):
+        #     s = Sdof(T=T[i], xi=xi)
+        #     r = s.get_response(self, tsType="baseExcitation")
+        #     D = np.max(np.abs(r.y[0]))
+        #     V = np.max(np.abs(r.y[1]))
+        #     A = np.max(np.abs(r.acc))
+        #     Sd[i] = D
+        #     Sv[i] = V
+        #     Sa[i] = A
+        return self.get_response_spectra_frequency_domain(T=T, xi=xi)
 
     def get_fourier_spectrum(self):
         """Compute fourier spectrum associated with the time series."""
@@ -461,7 +486,7 @@ class TimeSeries:
         return np.cumsum(yi)
 
 
-class ResponseSpectrum:
+class ResponseSpectra:
     """ResponseSpectrum class."""
 
     def __init__(self, T, Sd, Sv, Sa):
@@ -479,6 +504,8 @@ class ResponseSpectrum:
         self.Sd = Sd
         self.Sv = Sv
         self.Sa = Sa
+        self.PSv = (2*np.pi / self.T) * self.Sd
+        self.PSa = (2*np.pi / self.T) * self.PSv
 
     def __repr__(self):
         a = ""
