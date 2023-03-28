@@ -187,7 +187,7 @@ class TimeSeries:
         freq = fourier_spectrum.frequencies
         # Power amplitude is multiplied by 2 to consider power from positive and negative frequencies
         # The frequency 0 and nyquist apprear only once so divided later by 2.
-        powerAmp = 2 * dt / len(freq) * np.abs(fourier_spectrum.amplitude)**2
+        powerAmp = 2 * dt / self.npts * np.abs(fourier_spectrum.amplitude)**2
         powerAmp[0] = powerAmp[0]/2
         idx = np.argmax(powerAmp)
         powerAmp[idx] = powerAmp[idx]/2
