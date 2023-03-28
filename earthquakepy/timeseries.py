@@ -118,7 +118,7 @@ class TimeSeries:
         """Perform 1D interpolation."""
         return np.interp(t, self.t, self.y)
 
-    def get_response_spectra_frequency_domain(self, T=np.arange(0.01, 100.001, 0.01), xi=0.05):
+    def get_response_spectra_frequency_domain(self, T=np.arange(0.1, 100.001, 0.1), xi=0.05):
         """
         Calculate linear elastic response spectra associated with the timeseries.
 
@@ -143,7 +143,7 @@ class TimeSeries:
             Sa[i] = np.max(np.abs(a))
         return ResponseSpectra(T, Sd, Sv, Sa)
 
-    def get_response_spectra(self, T=np.arange(0.1, 20.01, 1.0), xi=0.05):
+    def get_response_spectra(self, T=np.arange(0.1, 100.001, 0.1), xi=0.05):
         """
         Calculate linear elastic response spectra associated with the timeseries.
 
@@ -182,12 +182,16 @@ class TimeSeries:
 
     def get_power_spectrum(self):
         """Compute power spectrum associated with the time series."""
-        N = self.npts
+        dt = self.dt
         fourier_spectrum = self.get_fourier_spectrum()
         freq = fourier_spectrum.frequencies
-        df = freq[1] - freq[0]
-        powerAmp = 2.0 * df * np.abs(fourier_spectrum.amplitude)**2
-        return PowerSpectrum(freq, powerAmp, N)
+        # Power amplitude is multiplied by 2 to consider power from positive and negative frequencies
+        # The frequency 0 and nyquist apprear only once so divided later by 2.
+        powerAmp = 2 * dt / len(freq) * np.abs(fourier_spectrum.amplitude)**2
+        powerAmp[0] = powerAmp[0]/2
+        idx = np.argmax(powerAmp)
+        powerAmp[idx] = powerAmp[idx]/2
+        return PowerSpectrum(freq, powerAmp, self.npts)
 
     def get_mean_period(self):
         """
@@ -500,10 +504,10 @@ class ResponseSpectra:
         Sv: (array of float) Spectral velocity
         Sa: (array of float) Spectral acceleration
         """
-        self.T = T
-        self.Sd = Sd
-        self.Sv = Sv
-        self.Sa = Sa
+        self.T = np.array(T)
+        self.Sd = np.array(Sd)
+        self.Sv = np.array(Sv)
+        self.Sa = np.array(Sa)
         self.PSv = (2*np.pi / self.T) * self.Sd
         self.PSa = (2*np.pi / self.T) * self.PSv
 
