@@ -32,7 +32,7 @@ class TimeSeries:
         self.npts = len(self.t)
         self.dt = self.t[1] - self.t[0]
         self.component = " "
-        self.duration = " "
+        self.duration = self.t[-1]
         self.eqDate = " "
         self.eqName = " "
         self.filepath = " "
@@ -637,11 +637,35 @@ class PowerSpectrum:
         self.amplitude = amplitude
         self.N = N
 
+        l0 = self.get_nth_moment(n=0)
+        l1 = self.get_nth_moment(n=1)
+        l2 = self.get_nth_moment(n=2)
+        self.centralFreq = np.sqrt(l2/l0)
+        self.shapeFactor = np.sqrt(1 - l1**2 / (l0*l2))
+
     def __repr__(self):
         a = ""
         for key, val in vars(self).items():
             a += "{:10s}:{}\n".format(key, val)
         return a
+
+    def get_nth_moment(self, n=0):
+        """
+        Calculate the nth moment of the power spectrum amplitude.
+        
+        Parameter:
+        ----------
+        n (scalar): order of moment
+
+        returns:
+        --------
+        nth moment
+        
+        """
+        N = self.N // 2
+        amp = self.amplitude[0:N]
+        freq = self.frequencies[0:N]
+        return np.trapz(freq**n * amp, x=freq)
 
     def get_compatible_timehistories(self, m=5):
         """
