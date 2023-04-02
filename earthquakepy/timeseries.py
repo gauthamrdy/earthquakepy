@@ -206,7 +206,7 @@ class TimeSeries:
         fourier_spectrum = self.get_fourier_spectrum()
         freq = fourier_spectrum.frequencies
         FAmp = fourier_spectrum.amplitude
-        boolArr = (freq > 0.25) & (freq < 20)
+        boolArr = (freq >= 0.25) & (freq <= 20)
         n = FAmp[boolArr] ** 2 / freq[boolArr]
         n = n.sum()
         d = FAmp[boolArr] ** 2
