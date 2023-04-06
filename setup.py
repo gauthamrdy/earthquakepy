@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="earthquakepy",
-    version="0.2.6",
+    version="0.3.0",
     description="python library for earthquake engineers.",
     url="https://github.com/gauthamrdy/earthquakepy",
     author="Gautham Reddy, Digvijay Patankar",
