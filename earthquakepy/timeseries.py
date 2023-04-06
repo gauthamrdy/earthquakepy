@@ -156,19 +156,6 @@ class TimeSeries:
         -------
         ResponseSpectrum object with T, Sd, Sv, Sa as attributes.
         """
-        # specLength = len(T)
-        # Sd = np.empty(specLength)
-        # Sv = np.empty(specLength)
-        # Sa = np.empty(specLength)
-        # for i in range(specLength):
-        #     s = Sdof(T=T[i], xi=xi)
-        #     r = s.get_response(self, tsType="baseExcitation")
-        #     D = np.max(np.abs(r.y[0]))
-        #     V = np.max(np.abs(r.y[1]))
-        #     A = np.max(np.abs(r.acc))
-        #     Sd[i] = D
-        #     Sv[i] = V
-        #     Sa[i] = A
         return self.get_response_spectra_frequency_domain(T=T, xi=xi)
 
     def get_fourier_spectrum(self):
