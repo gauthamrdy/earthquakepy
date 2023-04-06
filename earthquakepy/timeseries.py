@@ -138,9 +138,9 @@ class TimeSeries:
         for i in range(specLength):
             s = Sdof(T=T[i], xi=xi)
             t, d, v, a = s.get_response_frequency_domain(self, tsType="baseExcitation")
-            Sd[i] = np.max(np.abs(d))
-            Sv[i] = np.max(np.abs(v))
-            Sa[i] = np.max(np.abs(a))
+            Sd[i] = np.max(np.abs(np.real(d)))
+            Sv[i] = np.max(np.abs(np.real(v)))
+            Sa[i] = np.max(np.abs(np.real(a)))
         return ResponseSpectra(T, Sd, Sv, Sa)
 
     def get_response_spectra(self, T=np.arange(0.1, 100.001, 0.1), xi=0.05):

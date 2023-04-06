@@ -109,9 +109,7 @@ class Sdof:
 
         Returns
         -------
-        SdofResponseTimeSeries object
-
-        By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+        tuple of (t, x, v, a)
         """
         if tsType == "baseExcitation":
             f = -self.m * ts.y
