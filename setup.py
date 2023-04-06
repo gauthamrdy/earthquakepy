@@ -6,6 +6,8 @@ setup(
     name="earthquakepy",
     version="0.3.0",
     description="python library for earthquake engineers.",
+    long_description="A python module for seismologists and earthquake engineers."
+    long_description_content_type="text/markdown"
     url="https://github.com/gauthamrdy/earthquakepy",
     author="Gautham Reddy, Digvijay Patankar",
     author_email="pgrddy@gmail.com, dbpatankar@gmail.com",
