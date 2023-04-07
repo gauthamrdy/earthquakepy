@@ -6,7 +6,7 @@ this_directory = Path(__file__).parent
 
 setup(
     name="earthquakepy",
-    version="0.3.4",
+    version="0.3.6",
     description="python library for earthquake engineers.",
     long_description = (this_directory / "README.md").read_text(),
     long_description_content_type="text/markdown",
