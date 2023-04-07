@@ -9,4 +9,4 @@
 /earthquakepy.egg-info/
 
 # ignore contents of dist
-# dist/
+dist/
