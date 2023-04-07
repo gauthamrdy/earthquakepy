@@ -4,7 +4,7 @@ on: push
 
 jobs:
   build-n-publish-testpypi:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: Build and publish to TestPyPI
     runs-on: ubuntu-latest
 
     steps:
