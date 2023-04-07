@@ -2,13 +2,13 @@
 
 from setuptools import setup
 from pathlib import Path
+this_directory = Path(__file__).parent
 
 setup(
     name="earthquakepy",
     version="0.3.0",
     description="python library for earthquake engineers.",
-    this_directory = Path(__file__).parent
-    long_description = (this_directory / "README.md").read_text()
+    long_description = (this_directory / "README.md").read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/gauthamrdy/earthquakepy",
     author="Gautham Reddy, Digvijay Patankar",
