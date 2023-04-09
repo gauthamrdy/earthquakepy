@@ -3,7 +3,7 @@ import numpy as np
 from scipy.integrate import trapz, cumtrapz
 import matplotlib.pyplot as plt
 # import matplotlib as mpl
-from .singledof import Sdof  # , SdofNL
+from earthquakepy.singledof import Sdof  # , SdofNL
 from scipy.fftpack import fft, fftfreq
 
 np.set_printoptions(threshold=50)
@@ -25,7 +25,7 @@ class TimeSeries:
         t: (scalar or 1D array) time step (if scalar) or time axis (if 1D array)
         y: (1D array) ordinates
         """
-        if (type(t) == float) or (type(t) == int):
+        if type(t) in [int, float, np.int_, np.float_]:
             t = np.arange(t, len(y) * t + 0.1 * t, t)
         self.t = t
         self.y = y
