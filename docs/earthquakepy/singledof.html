@@ -29,6 +29,7 @@
 <pre><code class="python">import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.integrate._ivp.ivp import OdeResult
+from scipy.fftpack import ifft, fft, fftfreq
 import matplotlib.pyplot as plt
 
 
@@ -94,8 +95,74 @@ class Sdof:
 
         return dy
 
-    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+    def get_impulse_response(self, w=np.arange(0.1, 100, 0.1)):
         &#34;&#34;&#34;
+        Calculate the impulse response function G(w).
+        
+        Parameters
+        ----------
+        w (list of floats): Natural frequencies of interest in rad/s
+
+        Returns
+        -------
+        1D array of G(w) 
+        &#34;&#34;&#34;
+        G = 1 / (2*np.pi * (self.wn**2 + 2*self.xi*w*self.wn*complex(0, 1) - w**2))
+
+        return G
+
+    def get_frequency_response(self, w=np.arange(0.1, 100.0, 0.1)):
+        r&#34;&#34;&#34;
+        Calculate the frequency response function H(w).
+        
+        Parameters
+        ----------
+        w (list of floats): Natural frequencies of interest in rad/s
+
+        Returns
+        -------
+        1D array of H(w) = 2 * np.pi * G(w) 
+        &#34;&#34;&#34;
+        return 2 * np.pi * self.get_impulse_response(w=w)
+
+    def get_response_frequency_domain(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        r&#34;&#34;&#34;
+        Calculate the sdof system response in frequency domain.
+        
+        Parameters
+        ----------
+        ts: (timeseries object) timeseries defining loading/base excitation
+
+        tsType: (string) &#34;baseExcitation&#34; or &#34;force&#34;
+
+        Returns
+        -------
+        SdofResponseTimeSeries object
+
+        By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+        &#34;&#34;&#34;
+        if tsType == &#34;baseExcitation&#34;:
+            f = -self.m * ts.y
+        elif tsType == &#34;force&#34;:
+            f = ts.y
+        else:
+            raise Exception(&#34;Incorrect timeseries type given. It can be either &#39;baseExcitation&#39; or &#39;force&#39;.&#34;)
+
+        N = len(f)
+        dt = ts.dt  # sampling interval
+        F = fft(f)
+        freq = fftfreq(N, dt)  # [:N//2]
+
+        H = self.get_frequency_response(w=2*np.pi*freq)
+
+        X = H * F
+        V = 2*np.pi*freq * X  # Should it be multiplied by complex(0, 1)?
+        A = 2*np.pi*freq * V  # Should it be multiplied by complex(0, 1)?
+
+        return ts.t, ifft(X), ifft(V), ifft(A)
+
+    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        r&#34;&#34;&#34;
         Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
 
         Parameters
@@ -117,7 +184,7 @@ class Sdof:
         elif tsType == &#34;force&#34;:
             f = ts.y
         else:
-            raise Exception(&#34;Incorrect timeseries type given&#34;)
+            raise Exception(&#34;Incorrect timeseries type given. It can be either &#39;baseExcitation&#39; or &#39;force&#39;.&#34;)
 
         defaultArgs = {
             &#34;t_span&#34;: (ts.t[0], ts.t[-1] * 2),
@@ -132,7 +199,6 @@ class Sdof:
         }
         kwargs = {**defaultArgs, **kwargs}
 
-        # r = solve_ivp(self.sdof_grad, **kwargs)
         r = solve_ivp(self.sdof_grad, **kwargs)
         m, c, k = self.m, self.c, self.k
         fv = np.interp(r.t, ts.t, f)
@@ -355,8 +421,74 @@ You should provide at least wn or T or (m and k).</p>
 
         return dy
 
-    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+    def get_impulse_response(self, w=np.arange(0.1, 100, 0.1)):
         &#34;&#34;&#34;
+        Calculate the impulse response function G(w).
+        
+        Parameters
+        ----------
+        w (list of floats): Natural frequencies of interest in rad/s
+
+        Returns
+        -------
+        1D array of G(w) 
+        &#34;&#34;&#34;
+        G = 1 / (2*np.pi * (self.wn**2 + 2*self.xi*w*self.wn*complex(0, 1) - w**2))
+
+        return G
+
+    def get_frequency_response(self, w=np.arange(0.1, 100.0, 0.1)):
+        r&#34;&#34;&#34;
+        Calculate the frequency response function H(w).
+        
+        Parameters
+        ----------
+        w (list of floats): Natural frequencies of interest in rad/s
+
+        Returns
+        -------
+        1D array of H(w) = 2 * np.pi * G(w) 
+        &#34;&#34;&#34;
+        return 2 * np.pi * self.get_impulse_response(w=w)
+
+    def get_response_frequency_domain(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        r&#34;&#34;&#34;
+        Calculate the sdof system response in frequency domain.
+        
+        Parameters
+        ----------
+        ts: (timeseries object) timeseries defining loading/base excitation
+
+        tsType: (string) &#34;baseExcitation&#34; or &#34;force&#34;
+
+        Returns
+        -------
+        SdofResponseTimeSeries object
+
+        By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+        &#34;&#34;&#34;
+        if tsType == &#34;baseExcitation&#34;:
+            f = -self.m * ts.y
+        elif tsType == &#34;force&#34;:
+            f = ts.y
+        else:
+            raise Exception(&#34;Incorrect timeseries type given. It can be either &#39;baseExcitation&#39; or &#39;force&#39;.&#34;)
+
+        N = len(f)
+        dt = ts.dt  # sampling interval
+        F = fft(f)
+        freq = fftfreq(N, dt)  # [:N//2]
+
+        H = self.get_frequency_response(w=2*np.pi*freq)
+
+        X = H * F
+        V = 2*np.pi*freq * X  # Should it be multiplied by complex(0, 1)?
+        A = 2*np.pi*freq * V  # Should it be multiplied by complex(0, 1)?
+
+        return ts.t, ifft(X), ifft(V), ifft(A)
+
+    def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+        r&#34;&#34;&#34;
         Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
 
         Parameters
@@ -378,7 +510,7 @@ You should provide at least wn or T or (m and k).</p>
         elif tsType == &#34;force&#34;:
             f = ts.y
         else:
-            raise Exception(&#34;Incorrect timeseries type given&#34;)
+            raise Exception(&#34;Incorrect timeseries type given. It can be either &#39;baseExcitation&#39; or &#39;force&#39;.&#34;)
 
         defaultArgs = {
             &#34;t_span&#34;: (ts.t[0], ts.t[-1] * 2),
@@ -393,7 +525,6 @@ You should provide at least wn or T or (m and k).</p>
         }
         kwargs = {**defaultArgs, **kwargs}
 
-        # r = solve_ivp(self.sdof_grad, **kwargs)
         r = solve_ivp(self.sdof_grad, **kwargs)
         m, c, k = self.m, self.c, self.k
         fv = np.interp(r.t, ts.t, f)
@@ -402,6 +533,71 @@ You should provide at least wn or T or (m and k).</p>
 </details>
 <h3>Methods</h3>
 <dl>
+<dt id="earthquakepy.singledof.Sdof.get_frequency_response"><code class="name flex">
+<span>def <span class="ident">get_frequency_response</span></span>(<span>self, w=array([ 0.1,
+0.2,
+0.3, ..., 99.7, 99.8, 99.9]))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the frequency response function H(w).</p>
+<h2 id="parameters">Parameters</h2>
+<p>w (list of floats): Natural frequencies of interest in rad/s</p>
+<h2 id="returns">Returns</h2>
+<p>1D array of H(w) = 2 * np.pi * G(w)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_frequency_response(self, w=np.arange(0.1, 100.0, 0.1)):
+    r&#34;&#34;&#34;
+    Calculate the frequency response function H(w).
+    
+    Parameters
+    ----------
+    w (list of floats): Natural frequencies of interest in rad/s
+
+    Returns
+    -------
+    1D array of H(w) = 2 * np.pi * G(w) 
+    &#34;&#34;&#34;
+    return 2 * np.pi * self.get_impulse_response(w=w)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.singledof.Sdof.get_impulse_response"><code class="name flex">
+<span>def <span class="ident">get_impulse_response</span></span>(<span>self, w=array([ 0.1,
+0.2,
+0.3, ..., 99.7, 99.8, 99.9]))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the impulse response function G(w).</p>
+<h2 id="parameters">Parameters</h2>
+<p>w (list of floats): Natural frequencies of interest in rad/s</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>1D array</code> of <code>G(w)</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_impulse_response(self, w=np.arange(0.1, 100, 0.1)):
+    &#34;&#34;&#34;
+    Calculate the impulse response function G(w).
+    
+    Parameters
+    ----------
+    w (list of floats): Natural frequencies of interest in rad/s
+
+    Returns
+    -------
+    1D array of G(w) 
+    &#34;&#34;&#34;
+    G = 1 / (2*np.pi * (self.wn**2 + 2*self.xi*w*self.wn*complex(0, 1) - w**2))
+
+    return G</code></pre>
+</details>
+</dd>
 <dt id="earthquakepy.singledof.Sdof.get_response"><code class="name flex">
 <span>def <span class="ident">get_response</span></span>(<span>self, ts, tsType='baseExcitation', **kwargs)</span>
 </code></dt>
@@ -427,7 +623,7 @@ You should provide at least wn or T or (m and k).</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_response(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
-    &#34;&#34;&#34;
+    r&#34;&#34;&#34;
     Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
 
     Parameters
@@ -449,7 +645,7 @@ You should provide at least wn or T or (m and k).</p>
     elif tsType == &#34;force&#34;:
         f = ts.y
     else:
-        raise Exception(&#34;Incorrect timeseries type given&#34;)
+        raise Exception(&#34;Incorrect timeseries type given. It can be either &#39;baseExcitation&#39; or &#39;force&#39;.&#34;)
 
     defaultArgs = {
         &#34;t_span&#34;: (ts.t[0], ts.t[-1] * 2),
@@ -464,12 +660,70 @@ You should provide at least wn or T or (m and k).</p>
     }
     kwargs = {**defaultArgs, **kwargs}
 
-    # r = solve_ivp(self.sdof_grad, **kwargs)
     r = solve_ivp(self.sdof_grad, **kwargs)
     m, c, k = self.m, self.c, self.k
     fv = np.interp(r.t, ts.t, f)
     acc = 1 / m * (fv - c * r.y[1] - k * r.y[0])
     return SdofResponseTimeSeries(r, acc)</code></pre>
+</details>
+</dd>
+<dt id="earthquakepy.singledof.Sdof.get_response_frequency_domain"><code class="name flex">
+<span>def <span class="ident">get_response_frequency_domain</span></span>(<span>self, ts, tsType='baseExcitation', **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the sdof system response in frequency domain.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>ts</code></strong> :&ensp;<code>(timeseries object) timeseries defining loading/base excitation</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>tsType</code></strong> :&ensp;<code>(string) "baseExcitation"</code> or <code>"force"</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="earthquakepy.singledof.SdofResponseTimeSeries" href="#earthquakepy.singledof.SdofResponseTimeSeries">SdofResponseTimeSeries</a> object</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_response_frequency_domain(self, ts, tsType=&#34;baseExcitation&#34;, **kwargs):
+    r&#34;&#34;&#34;
+    Calculate the sdof system response in frequency domain.
+    
+    Parameters
+    ----------
+    ts: (timeseries object) timeseries defining loading/base excitation
+
+    tsType: (string) &#34;baseExcitation&#34; or &#34;force&#34;
+
+    Returns
+    -------
+    SdofResponseTimeSeries object
+
+    By default the solution will be obtained for duration = 2 * (ts.t duration). This can be changed using t_span argument. Default method : BDF.
+    &#34;&#34;&#34;
+    if tsType == &#34;baseExcitation&#34;:
+        f = -self.m * ts.y
+    elif tsType == &#34;force&#34;:
+        f = ts.y
+    else:
+        raise Exception(&#34;Incorrect timeseries type given. It can be either &#39;baseExcitation&#39; or &#39;force&#39;.&#34;)
+
+    N = len(f)
+    dt = ts.dt  # sampling interval
+    F = fft(f)
+    freq = fftfreq(N, dt)  # [:N//2]
+
+    H = self.get_frequency_response(w=2*np.pi*freq)
+
+    X = H * F
+    V = 2*np.pi*freq * X  # Should it be multiplied by complex(0, 1)?
+    A = 2*np.pi*freq * V  # Should it be multiplied by complex(0, 1)?
+
+    return ts.t, ifft(X), ifft(V), ifft(A)</code></pre>
 </details>
 </dd>
 <dt id="earthquakepy.singledof.Sdof.sdof_grad"><code class="name flex">
@@ -827,7 +1081,10 @@ You should provide at least wn or T or (m and k).</p>
 <li>
 <h4><code><a title="earthquakepy.singledof.Sdof" href="#earthquakepy.singledof.Sdof">Sdof</a></code></h4>
 <ul class="">
+<li><code><a title="earthquakepy.singledof.Sdof.get_frequency_response" href="#earthquakepy.singledof.Sdof.get_frequency_response">get_frequency_response</a></code></li>
+<li><code><a title="earthquakepy.singledof.Sdof.get_impulse_response" href="#earthquakepy.singledof.Sdof.get_impulse_response">get_impulse_response</a></code></li>
 <li><code><a title="earthquakepy.singledof.Sdof.get_response" href="#earthquakepy.singledof.Sdof.get_response">get_response</a></code></li>
+<li><code><a title="earthquakepy.singledof.Sdof.get_response_frequency_domain" href="#earthquakepy.singledof.Sdof.get_response_frequency_domain">get_response_frequency_domain</a></code></li>
 <li><code><a title="earthquakepy.singledof.Sdof.sdof_grad" href="#earthquakepy.singledof.Sdof.sdof_grad">sdof_grad</a></code></li>
 </ul>
 </li>

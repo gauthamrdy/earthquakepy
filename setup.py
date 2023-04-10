@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
 from setuptools import setup
+from pathlib import Path
+this_directory = Path(__file__).parent
 
 setup(
     name="earthquakepy",
-    version="0.2.6",
+    version="0.3.10",
     description="python library for earthquake engineers.",
+    long_description = (this_directory / "README.md").read_text(),
+    long_description_content_type="text/markdown",
     url="https://github.com/gauthamrdy/earthquakepy",
     author="Gautham Reddy, Digvijay Patankar",
     author_email="pgrddy@gmail.com, dbpatankar@gmail.com",

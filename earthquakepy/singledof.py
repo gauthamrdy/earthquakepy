@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.integrate._ivp.ivp import OdeResult
+from scipy.fftpack import ifft, fft, fftfreq
 import matplotlib.pyplot as plt
 
 
@@ -66,8 +67,72 @@ class Sdof:
 
         return dy
 
-    def get_response(self, ts, tsType="baseExcitation", **kwargs):
+    def get_impulse_response(self, w=np.arange(0.1, 100, 0.1)):
         """
+        Calculate the impulse response function G(w).
+        
+        Parameters
+        ----------
+        w (list of floats): Natural frequencies of interest in rad/s
+
+        Returns
+        -------
+        1D array of G(w) 
+        """
+        G = 1 / (2*np.pi * (self.wn**2 + 2*self.xi*w*self.wn*complex(0, 1) - w**2))
+
+        return G
+
+    def get_frequency_response(self, w=np.arange(0.1, 100.0, 0.1)):
+        r"""
+        Calculate the frequency response function H(w).
+        
+        Parameters
+        ----------
+        w (list of floats): Natural frequencies of interest in rad/s
+
+        Returns
+        -------
+        1D array of H(w) = 2 * np.pi * G(w) 
+        """
+        return 2 * np.pi * self.get_impulse_response(w=w)
+
+    def get_response_frequency_domain(self, ts, tsType="baseExcitation", **kwargs):
+        r"""
+        Calculate the sdof system response in frequency domain.
+        
+        Parameters
+        ----------
+        ts: (timeseries object) timeseries defining loading/base excitation
+
+        tsType: (string) "baseExcitation" or "force"
+
+        Returns
+        -------
+        tuple of (t, x, v, a)
+        """
+        if tsType == "baseExcitation":
+            f = -self.m * ts.y
+        elif tsType == "force":
+            f = ts.y
+        else:
+            raise Exception("Incorrect timeseries type given. It can be either 'baseExcitation' or 'force'.")
+
+        N = len(f)
+        dt = ts.dt  # sampling interval
+        F = fft(f)
+        freq = fftfreq(N, dt)  # [:N//2]
+
+        H = self.get_frequency_response(w=2*np.pi*freq)
+
+        X = H * F
+        V = 2*np.pi*freq * X  # Should it be multiplied by complex(0, 1)?
+        A = 2*np.pi*freq * V  # Should it be multiplied by complex(0, 1)?
+
+        return ts.t, ifft(X), ifft(V), ifft(A)
+
+    def get_response(self, ts, tsType="baseExcitation", **kwargs):
+        r"""
         Wrapper around solve_ivp module from scipy.integrate. It supports all the arguments supported by solve_ivp.
 
         Parameters
@@ -89,7 +154,7 @@ class Sdof:
         elif tsType == "force":
             f = ts.y
         else:
-            raise Exception("Incorrect timeseries type given")
+            raise Exception("Incorrect timeseries type given. It can be either 'baseExcitation' or 'force'.")
 
         defaultArgs = {
             "t_span": (ts.t[0], ts.t[-1] * 2),
@@ -104,7 +169,6 @@ class Sdof:
         }
         kwargs = {**defaultArgs, **kwargs}
 
-        # r = solve_ivp(self.sdof_grad, **kwargs)
         r = solve_ivp(self.sdof_grad, **kwargs)
         m, c, k = self.m, self.c, self.k
         fv = np.interp(r.t, ts.t, f)
