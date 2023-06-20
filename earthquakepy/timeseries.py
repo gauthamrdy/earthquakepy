@@ -476,6 +476,16 @@ class TimeSeries:
         yi = np.concatenate((np.array([init]), area_vec))
         return np.cumsum(yi)
 
+    def get_max_incremental_velocity(self):
+        # Calculate time increments
+        dt = self.dt
+        y = self.y
+        # Calculate the incremental velocities
+        velocities = np.cumsum(0.5 * (y[:-1] + y[1:]) * dt)
+        # Find and return the maximum incremental velocity
+        max_velocity = np.max(np.abs(velocities))
+        return max_velocity
+
 
 class ResponseSpectra:
     """ResponseSpectrum class."""
